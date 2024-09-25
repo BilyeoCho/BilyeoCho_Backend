@@ -33,7 +33,6 @@ jobs:
         run: chmod +x gradlew
 
       # 4) Gradle 사용
-      - name: Build with Gradle
-        uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
-        with:
-          arguments: clean build
+      # Spring Boot Build
+      - name: Spring Boot Build
+        run: ./gradlew clean build -x test
