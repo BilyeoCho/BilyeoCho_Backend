@@ -7,6 +7,7 @@ on:
     # feat/로 시작하는 모든 브랜치에 PUSH 발생시
   push:
     branches:
+      - develop
       - feat/**
 
 permissions:
