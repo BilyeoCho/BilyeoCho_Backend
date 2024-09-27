@@ -56,7 +56,7 @@ jobs:
             aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY}}
             aws-region: ${{ secrets.AWS_REGION }}
 
-              # 빌드파일을 ZIP 파일로 생성
+      # 7) 빌드파일을 ZIP 파일로 생성
       - name: Make zip file
         run: |
           mkdir deploy
@@ -68,10 +68,14 @@ jobs:
           cp ./build/libs/*.jar ./deploy/
           zip -r -qq -j ./bilyeocho-build.zip ./deploy
 
-      # zip S3에 업로드
+      # 8) zip S3에 업로드
       - name: Upload to S3
-        run: aws s3 cp --region ${{ secrets.AWS_REGION }} ./$GITHUB_SHA.zip s3://$S3_BUCKET_NAME/$PROJECT_NAME/$GITHUB_SHA.zip
+        run: aws s3 cp --region ${{ secrets.AWS_REGION }} ./$GITHUB_SHA.zip s3://bilyeo-bucket/$PROJECT_NAME/$GITHUB_SHA.zip
 
-      # CodeDeploy 배포
+
+      # 9) CodeDeploy 배포
       - name: Request Deployment
-        run: aws deploy create-deployment --application-name $AWS_CODEDEPLOY_APPLICATION_NAME --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name $AWS_CODEDEPLOY_DEPLOYMENT_GROUP_NAME --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$PROJECT_NAME/$GITHUB_SHA.zip
+        run: aws deploy create-deployment --application-name ${{ secrets.AWS_APP_NAME }} \
+              --deployment-config-name CodeDeployDefault.OneAtATime \
+              --deployment-group-name ${{ secrets.AWS_APP_NAME }} \
+              --s3-location bucket=bilyeocho-bucket,bundleType=zip,key=bilyeocho-build.zip
