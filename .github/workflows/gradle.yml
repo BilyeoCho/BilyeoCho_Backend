@@ -70,7 +70,7 @@ jobs:
 
       # 8) zip S3에 업로드
       - name: Upload to S3
-        run: aws s3 cp --region ${{ secrets.AWS_REGION }} ./bilyeocho-bulid.zip 
+        run: aws s3 cp --region ${{ secrets.AWS_REGION }} ./bilyeocho-build.zip 
               s3://${{ secrets.AWS_S3_BUCKET_NAME }}
 
 
