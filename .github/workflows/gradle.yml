@@ -60,10 +60,10 @@ jobs:
       - name: Make zip file
         run: |
           mkdir deploy
-          cp ./docker-compose.blue.yml ./deploy/
-          cp ./docker-compose.green.yml ./deploy/
-          cp ./appspec.yml ./deploy/
-          cp ./Dockerfile ./deploy/
+          cp ./docker/docker-compose.blue.yml ./deploy/
+          cp ./docker/docker-compose.green.yml ./deploy/
+          cp ./docker/appspec.yml ./deploy/
+          cp ./docker/Dockerfile ./deploy/
           cp ./scripts/deploy.sh ./deploy/
           cp ./build/libs/*.jar ./deploy/
           zip -r -qq -j ./bilyeocho-build.zip ./deploy
