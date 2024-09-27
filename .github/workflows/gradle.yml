@@ -28,11 +28,22 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # 3) gradlew에 실행 권한 부여
+      # 3) grable caching // 빌드 시간 단축
+      - name: Gradle Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      # 4) gradlew에 실행 권한 부여
       - name: Make gradlew executable
         run: chmod +x gradlew
 
-      # 4) Gradle 사용
+      # 5) Gradle 사용
       # Spring Boot Build
       - name: Spring Boot Build
         run: ./gradlew clean build -x test
