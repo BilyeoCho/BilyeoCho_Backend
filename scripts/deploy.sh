@@ -3,7 +3,7 @@
 # EC2 인스턴스의 홈 디렉토리로 이동
 cd /home/ec2-user
 
-# 환경변수 DOCKER_APP_NAME을 connectdog으로 설정
+# 환경변수 DOCKER_APP_NAME을 bilyeocho으로 설정
 DOCKER_APP_NAME=bilyeocho
 
 # 실행 중인 blue가 있는지 확인
@@ -28,8 +28,7 @@ if [ -z "$EXIST_BLUE" ]; then
 
   # blue가 현재 실행중이지 않다면 런타임 에러 또는 다른 이유로 배포가 되지 못한 상태
   if [ -z "$BLUE_HEALTH" ]; then
-    # slack으로 알람을 보낼 수 있는 스크립트를 실행한다.
-    sudo ./slack_blue.sh
+    # 에러 처리 로직 추가 가능
   else
     echo "green 중단 시작 : $(date +%Y)-$(date +%m)-$(date +%d) $(date +%H):$(date +%M):$(date +%S)" >> /home/ec2-user/deploy.log
 
@@ -53,8 +52,7 @@ else
 
   # green이 현재 실행중이지 않다면 런타임 에러 또는 다른 이유로 배포가 되지 못한 상태
   if [ -z "$GREEN_HEALTH" ]; then
-      # slack으로 알람을 보낼 수 있는 스크립트를 실행한다.
-      sudo ./slack_green.sh
+      # 에러 처리 로직 추가 가능
   else
       echo "blue 중단 시작 : $(date +%Y)-$(date +%m)-$(date +%d) $(date +%H):$(date +%M):$(date +%S)" >> /home/ec2-user/deploy.log
 
