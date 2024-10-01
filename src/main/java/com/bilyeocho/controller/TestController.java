@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TestController {
 
-    @Operation(summary = "테스트 엔드포인트", description = "기본 테스트를 위한 엔드포인트입니다.")
+    @Operation(summary = "API 요약", description = "API 설명.")
     @GetMapping("/")
     public String test() {
         return "test";

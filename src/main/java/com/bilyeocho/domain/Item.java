@@ -1,17 +1,8 @@
 package com.bilyeocho.domain;
 
 import jakarta.persistence.*;
-import com.bilyeocho.domain.User;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,13 +13,62 @@ public class Item {
     private String itemName;
 
     @Column(name = "item_photo", nullable = false)
-    private String itemPhoto;
+    private String itemPhoto = null;
 
     @Column(name = "category", nullable = false)
-    private String category;
+    private String category = null;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    public Item() {}
+
+    public Item(String itemName, String itemPhoto, User user) {
+        this.itemName = itemName;
+        this.itemPhoto = itemPhoto;
+        this.category = category;
+        this.user = user;
+    }
+
+    public Long getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(Long itemId) {
+        this.itemId = itemId;
+    }
+
+    public String getItemName() {
+        return itemName;
+    }
+
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
+
+    public String getItemPhoto() {
+        return itemPhoto;
+    }
+
+    public void setItemPhoto(String itemPhoto) {
+        this.itemPhoto = itemPhoto;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }
+
