@@ -1,5 +1,6 @@
 package com.bilyeocho.domain;
 
+import com.bilyeocho.domain.Item;
 import jakarta.persistence.*;
 
 import java.util.List;
