@@ -8,6 +8,6 @@ public class TestController {
 
     @GetMapping("/")
     public String greet(){
-        return "자동 배포 성공";
+        return "test";
     }
 }
