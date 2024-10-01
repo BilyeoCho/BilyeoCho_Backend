@@ -1,6 +1,3 @@
-server:
-  port: 8082
-
 spring:
   application:
     name: Bilyeocho
@@ -14,7 +11,7 @@ spring:
   jpa:
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
+        ddl-auto: create
 
   data:
     redis:
