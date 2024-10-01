@@ -1,4 +1,4 @@
-package com.bilyeocho.itemRegist.domain.user;
+package com.bilyeocho.domain;
 
 import jakarta.persistence.*;
 
@@ -11,5 +11,5 @@ public class User {
     private Long id;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<User> registerItems;
+    private List<Item> registerItems;
 }

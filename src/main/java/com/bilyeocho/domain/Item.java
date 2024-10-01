@@ -1,7 +1,6 @@
-package com.bilyeocho.itemRegist.domain.item;
+package com.bilyeocho.domain;
 
 import jakarta.persistence.*;
-import com.bilyeocho.itemRegist.domain.user.User;
 
 @Entity
 public class Item {
