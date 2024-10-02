@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # EC2 인스턴스의 홈 디렉토리로 이동
-cd /home/ec2-user
+cd /home/ec2-user/app
 
 # 환경변수 DOCKER_APP_NAME을 bilyeocho으로 설정
 DOCKER_APP_NAME=bilyeocho
