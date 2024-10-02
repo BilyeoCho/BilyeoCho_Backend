@@ -8,3 +8,5 @@ services:
     container_name: bilyeocho-green
     environment:
       TZ: "Asia/Seoul"
+    env_file:
+      - .env
