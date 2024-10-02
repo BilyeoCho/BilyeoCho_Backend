@@ -10,6 +10,6 @@ public class TestController {
     @Operation(summary = "API 요약", description = "API 설명.")
     @GetMapping("/")
     public String test() {
-        return "test";
+        return "ci/cd test";
     }
 }
