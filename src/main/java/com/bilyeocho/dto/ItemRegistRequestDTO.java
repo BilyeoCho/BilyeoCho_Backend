@@ -5,11 +5,11 @@ import lombok.Getter;
 import lombok.Setter;
 import org.antlr.v4.runtime.misc.NotNull;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 public class ItemRegistRequestDTO {
-    private String itemId;
-
     private String itemName;
 
     private String itemPhoto;
@@ -17,6 +17,9 @@ public class ItemRegistRequestDTO {
     private String category;
 
     private Long userId;
+
+    private LocalDateTime startTime;
+
 }
 
 
