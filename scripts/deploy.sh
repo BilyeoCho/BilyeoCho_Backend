@@ -3,7 +3,7 @@
 # EC2 인스턴스의 홈 디렉토리로 이동
 cd /home/ec2-user
 
-# 환경변수 DOCKER_APP_NAME을 connectdog으로 설정
+# 환경변수 DOCKER_APP_NAME을 bilyeocho으로 설정
 DOCKER_APP_NAME=bilyeocho
 
 # 실행 중인 blue가 있는지 확인
@@ -18,7 +18,8 @@ if [ -z "$EXIST_BLUE" ]; then
   echo "blue 배포 시작 : $(date +%Y)-$(date +%m)-$(date +%d) $(date +%H):$(date +%M):$(date +%S)" >> /home/ec2-user/deploy.log
 
   # docker-compose.blue.yml 파일을 사용하여 connectdog-blue 프로젝트의 컨테이너를 빌드하고 실행
-  sudo docker-compose -p ${DOCKER_APP_NAME}-blue -f docker-compose.blue.yml up -d --build
+  BUILD_OUTPUT=$(sudo docker-compose -p ${DOCKER_APP_NAME}-blue -f docker-compose.blue.yml up -d --build 2>&1)
+  echo "$BUILD_OUTPUT" >> /home/ec2-user/deploy.log
 
   # 30초 동안 대기
   sleep 30
@@ -29,6 +30,7 @@ if [ -z "$EXIST_BLUE" ]; then
   # blue가 현재 실행중이지 않다면 런타임 에러 또는 다른 이유로 배포가 되지 못한 상태
   if [ -z "$BLUE_HEALTH" ]; then
     echo "ERROR: blue 배포 실패: $(date +%Y)-$(date +%m)-$(date +%d) $(date +%H):$(date +%M):$(date +%S)" >> /home/ec2-user/deploy.log
+    echo "에러 메시지: $BUILD_OUTPUT" >> /home/ec2-user/deploy.log
   else
     echo "green 중단 시작 : $(date +%Y)-$(date +%m)-$(date +%d) $(date +%H):$(date +%M):$(date +%S)" >> /home/ec2-user/deploy.log
 
@@ -44,7 +46,8 @@ if [ -z "$EXIST_BLUE" ]; then
 # blue가 실행중이면 green up
 else
   echo "green 배포 시작 : $(date +%Y)-$(date +%m)-$(date +%d) $(date +%H):$(date +%M):$(date +%S)" >> /home/ec2-user/deploy.log
-  sudo docker-compose -p ${DOCKER_APP_NAME}-green -f docker-compose.green.yml up -d --build
+  BUILD_OUTPUT=$(sudo docker-compose -p ${DOCKER_APP_NAME}-green -f docker-compose.green.yml up -d --build 2>&1)
+  echo "$BUILD_OUTPUT" >> /home/ec2-user/deploy.log
 
   sleep 30
   # green이 문제 없이 배포 되었는지 현재 실행여부를 확인한다
@@ -53,6 +56,7 @@ else
   # green이 현재 실행중이지 않다면 런타임 에러 또는 다른 이유로 배포가 되지 못한 상태
   if [ -z "$GREEN_HEALTH" ]; then
       echo "ERROR: green 배포 실패: $(date +%Y)-$(date +%m)-$(date +%d) $(date +%H):$(date +%M):$(date +%S)" >> /home/ec2-user/deploy.log
+      echo "에러 메시지: $BUILD_OUTPUT" >> /home/ec2-user/deploy.log
   else
       echo "blue 중단 시작 : $(date +%Y)-$(date +%m)-$(date +%d) $(date +%H):$(date +%M):$(date +%S)" >> /home/ec2-user/deploy.log
 
