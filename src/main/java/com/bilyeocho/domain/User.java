@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@Entity
-@Table(name = "users")
+@Entity(name = "User")
 @Data
 @Builder
 @NoArgsConstructor
@@ -19,29 +18,28 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    //내부 식별자 수정 필
     private Long id;
 
-    //사용자가 회원가입 시 입력하는 사용자 ID 수정 필
-    @Column(name = "user_identifier")
-    private String userIdentifier;
+    @Column(name = "user_id",  nullable = false)
+    private String userId;
 
-    @Column(name = "user_name")
-    private String userName;
+//    @Column(name = "user_name",  nullable = false)
+//    private String userName;
 
-    @Column(name = "user_email")
-    private String userEmail;
+//    @Column(name = "user_email")
+//    private String userEmail;
 
-    //나중에 암호화 수정 필요
-    @Column(name = "user_password")
+    @Column(name = "user_password",  nullable = false)
     private String userPassword;
 
     @Column(name = "user_photo")
     private String userPhoto;
 
+
+    //기본 값으로 USER
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private Role role = Role.USER;
 
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
