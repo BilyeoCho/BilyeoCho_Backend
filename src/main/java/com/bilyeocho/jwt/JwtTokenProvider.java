@@ -52,11 +52,11 @@ public class JwtTokenProvider {
         this.userRepository = userRepository;
     }
 
-    public Optional<User> getUser(HttpServletRequest request) {
-        String accessToken = resolveToken(request);
-        Authentication authentication = getAuthentication(accessToken);
-        return userRepository.findByUserId(authentication.getName());
-    }
+//    public Optional<User> getUser(HttpServletRequest request) {
+//        String accessToken = resolveToken(request);
+//        Authentication authentication = getAuthentication(accessToken);
+//        return userRepository.findByUserId(authentication.getName());
+//    }
 
 
     public TokenInfo createToken(Authentication authentication, HttpServletResponse response) {

@@ -23,7 +23,7 @@ public class AuthController {
 
     @PostMapping("/join")
     @Operation(summary = "회원가입", description = "유저 회원가입")
-    public ResponseEntity<String> join(@RequestBody AuthRequest joinRequest){
+    public ResponseEntity join(@RequestBody AuthRequest joinRequest){
         authService.join(joinRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
