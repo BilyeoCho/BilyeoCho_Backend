@@ -1,5 +1,6 @@
 package com.bilyeocho.service;
 
+import com.bilyeocho.domain.Category;
 import com.bilyeocho.domain.Item;
 import com.bilyeocho.domain.User;
 import com.bilyeocho.dto.ItemRegistRequestDTO;
@@ -22,7 +23,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public ItemRegistResponseDTO regsiterItem(ItemRegistRequestDTO requestDTO) {
+    public ItemRegistResponseDTO registerItem(ItemRegistRequestDTO requestDTO) {
         User user = userRepository.findById(requestDTO.getUserId())
                 .orElseThrow(() -> new RuntimeException("유저 조회가 불가능합니다"));
 
@@ -30,10 +31,10 @@ public class ItemServiceImpl implements ItemService {
                 .itemName(requestDTO.getItemName())
                 .itemPhoto(requestDTO.getItemPhoto())
                 .category(requestDTO.getCategory())
-                .startTime(requestDTO.getStartTime())
+                .rentalDuration(requestDTO.getRentalDuration())
+                .itemDescription(requestDTO.getItemDescription())
                 .user(user)
                 .build();
-
         Item savedItem = itemRepository.save(newItem);
 
         return new ItemRegistResponseDTO(savedItem.getItemId(), true);

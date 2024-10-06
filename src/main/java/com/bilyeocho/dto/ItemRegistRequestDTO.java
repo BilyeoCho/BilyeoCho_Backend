@@ -1,5 +1,6 @@
 package com.bilyeocho.dto;
 
+import com.bilyeocho.domain.Category;
 import com.bilyeocho.domain.User;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,16 +11,17 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class ItemRegistRequestDTO {
-    private String itemName;
-
     private String itemPhoto;
 
-    private String category;
+    private Category category;
+
+    private String itemName;
+
+    private String itemDescription;
+
+    private int rentalDuration;
 
     private Long userId;
-
-    private LocalDateTime startTime;
-
 }
 
 

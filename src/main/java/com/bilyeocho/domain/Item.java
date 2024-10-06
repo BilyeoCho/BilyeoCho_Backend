@@ -7,6 +7,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "items")
 @Getter
 @Setter
 @Builder
@@ -25,14 +26,15 @@ public class Item {
     @Column(name = "item_photo", nullable = false)
     private String itemPhoto;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "category", nullable = false)
-    private String category;
+    private Category category;
 
-    @Column(name = "start_time", nullable = false)
-    private LocalDateTime startTime;
+    @Column(name = "rental_duration", nullable = false)
+    private Integer rentalDuration;
 
-    @Column(name = "end_time")
-    private LocalDateTime endTime;
+    @Column(name = "item_description", length = 1000, nullable = false) // 필요시 길이 조절
+    private String itemDescription;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

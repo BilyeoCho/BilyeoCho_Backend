@@ -5,6 +5,6 @@ import com.bilyeocho.dto.ItemRegistResponseDTO;
 
 public interface ItemService {
 
-    ItemRegistResponseDTO regsiterItem(ItemRegistRequestDTO requestDTO);
+    ItemRegistResponseDTO registerItem(ItemRegistRequestDTO requestDTO);
 
 }
