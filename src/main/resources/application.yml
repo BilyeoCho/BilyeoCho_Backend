@@ -1,3 +1,8 @@
+jwt:
+  secret: ${JWT_SECRET}
+  refresh-expiration-time: 259200000 # 3days
+  access-expiration-time: 3600000
+
 spring:
   application:
     name: Bilyeocho
@@ -11,8 +16,10 @@ spring:
   jpa:
     properties:
       hibernate:
-        ddl-auto: create
-
+        format_sql: true
+        show_sql: true
+        #        ddl-auto: create
+        hbm2ddl.auto: create
   data:
     redis:
       host: ${REDIS_HOST}
