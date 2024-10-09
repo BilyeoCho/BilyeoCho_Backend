@@ -11,6 +11,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService  {
@@ -35,13 +37,12 @@ public class AuthService  {
         }
 
         // 이름, 이메일 추가 필요
-        User joinuser = User.builder()
+        User joinUser = User.builder()
                 .userId(joinRequest.getUserId())
                 .userPassword(encoder.encode(joinRequest.getUserPwd()))
-                .userPhoto(null)
                 .build();
 
-        userRepository.save(joinuser);
+        userRepository.save(joinUser);
     }
 
     public TokenInfo login(AuthRequest loginRequest, HttpServletResponse response){
@@ -49,10 +50,9 @@ public class AuthService  {
         if(!encoder.matches(loginRequest.getUserPwd(), user.getUserPassword())){
             throw new CustomException(ErrorCode.MISMATCHED_PASSWORD);
         }
-
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginRequest.getUserId(), loginRequest.getUserPwd());
         Authentication authentication = authenticationManagerBuilder.authenticate(authenticationToken);
-        return jwtTokenProvider.createToken(authentication, response);
+        return jwtTokenProvider.generateToken(authentication, response);
     }
 
     public TokenInfo reissueToken(HttpServletRequest request, HttpServletResponse response){
