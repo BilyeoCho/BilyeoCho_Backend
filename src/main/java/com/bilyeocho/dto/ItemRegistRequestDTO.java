@@ -1,17 +1,14 @@
 package com.bilyeocho.dto;
 
 import com.bilyeocho.domain.Category;
-import com.bilyeocho.domain.User;
 import lombok.Getter;
 import lombok.Setter;
-import org.antlr.v4.runtime.misc.NotNull;
-
-import java.time.LocalDateTime;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
 public class ItemRegistRequestDTO {
-    private String itemPhoto;
+    private MultipartFile itemPhoto;
 
     private Category category;
 
@@ -23,3 +20,4 @@ public class ItemRegistRequestDTO {
 
     private String userId;
 }
+
