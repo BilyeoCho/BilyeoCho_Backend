@@ -41,7 +41,8 @@ public class SecurityConfig {
                 .exceptionHandling(exHandling -> exHandling.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/join", "/login", "/test/**", "/v3/**", "/swagger-ui/**").permitAll()
+                                .requestMatchers("/join", "/login", "/test/**", "/v3/**", "/swagger-ui/**", "/regist").permitAll()
+                                //regist 추가 - 태양
                                 .requestMatchers("/api/**").authenticated());
 
         return http.build();

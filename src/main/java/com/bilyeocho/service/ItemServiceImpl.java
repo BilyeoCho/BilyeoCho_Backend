@@ -24,7 +24,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public ItemRegistResponseDTO registerItem(ItemRegistRequestDTO requestDTO) {
-        User user = userRepository.findById(requestDTO.getUserId())
+        User user = userRepository.findByUserId(requestDTO.getUserId())
                 .orElseThrow(() -> new RuntimeException("유저 조회가 불가능합니다"));
 
         Item newItem = Item.builder()

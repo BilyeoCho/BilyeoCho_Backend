@@ -21,7 +21,5 @@ public class ItemRegistRequestDTO {
 
     private int rentalDuration;
 
-    private Long userId;
+    private String userId;
 }
-
-

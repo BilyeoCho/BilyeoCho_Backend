@@ -119,6 +119,7 @@ public class JwtTokenProvider {
 
         Collection<? extends GrantedAuthority> authorities =
                 Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
+                        .filter(authority -> !authority.trim().isEmpty())  // 빈 문자열 필터링 - 태양
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
         UserDetails principal = new org.springframework.security.core.userdetails.User(claims.getSubject(), "", authorities);

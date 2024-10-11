@@ -5,6 +5,7 @@ import com.bilyeocho.dto.ItemRegistRequestDTO;
 import com.bilyeocho.dto.ItemRegistResponseDTO;
 import com.bilyeocho.service.ItemService;
 import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
