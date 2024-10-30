@@ -36,8 +36,11 @@ public class Item {
     @Column(name = "item_description", length = 1000, nullable = false) // 필요시 길이 조절
     private String itemDescription;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+
+
 
 }

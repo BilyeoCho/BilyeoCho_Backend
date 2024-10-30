@@ -28,8 +28,8 @@ public class User implements UserDetails {
     @Column(name = "user_id",  nullable = false)
     private String userId;
 
-//    @Column(name = "user_name",  nullable = false)
-//    private String userName;
+    @Column(name = "user_name",  nullable = false)
+    private String userName;
 
 //    @Column(name = "user_email")
 //    private String userEmail;
@@ -52,6 +52,13 @@ public class User implements UserDetails {
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
     private List<String> roles = new ArrayList<>();
+
+    @PreRemove
+    public void preRemove() {
+        for (Item item : registerItems) {
+            item.setUser(null); // 관계 끊기
+        }
+    }
 
 
     @PrePersist
