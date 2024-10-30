@@ -1,30 +1,18 @@
-jwt:
-  secret: ${JWT_SECRET}
-  refresh-expiration-time: 259200000 # 3days
-  access-expiration-time: 3600000
-
+#application.yml
 spring:
-  application:
-    name: Bilyeocho
-
-  datasource:
-    url: ${MYSQL_URL}
-    username: ${MYSQL_USERNAME}
-    password: ${MYSQL_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
+  profiles:
+    active: prod
 
   jpa:
     properties:
       hibernate:
         format_sql: true
         show_sql: true
-        #        ddl-auto: create
-        hbm2ddl.auto: create
+
   data:
     redis:
-      host: ${REDIS_HOST}
-      port: ${REDIS_PORT}
       timeout: 10000
+
   aws:
     access:
       key: ${AWS_ACCESS_KEY}
@@ -34,3 +22,7 @@ spring:
     s3:
       bucket: ${S3_BUCKET_NAME}
 
+jwt:
+  secret: ${JWT_SECRET}
+  refresh-expiration-time: 259200000 # 3days
+  access-expiration-time: 3600000
