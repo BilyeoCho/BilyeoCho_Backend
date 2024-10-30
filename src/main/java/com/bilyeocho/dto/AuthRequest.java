@@ -11,5 +11,6 @@ public class AuthRequest {
 
     // 이름, 이메일 추가 필요
     private String userId;
+    private String userName;
     private String userPwd;
 }

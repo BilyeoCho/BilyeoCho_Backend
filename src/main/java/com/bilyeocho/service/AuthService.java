@@ -39,6 +39,7 @@ public class AuthService  {
         // 이름, 이메일 추가 필요
         User joinUser = User.builder()
                 .userId(joinRequest.getUserId())
+                .userName(joinRequest.getUserName())
                 .userPassword(encoder.encode(joinRequest.getUserPwd()))
                 .build();
 
