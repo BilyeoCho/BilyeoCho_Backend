@@ -24,6 +24,7 @@ spring:
     redis:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
+      timeout: 3000
   aws:
     access:
       key: ${AWS_ACCESS_KEY}
