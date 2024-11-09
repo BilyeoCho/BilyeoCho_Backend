@@ -41,9 +41,9 @@ public class SecurityConfig {
                 .exceptionHandling(exHandling -> exHandling.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/api/join", "/api/login", "/test/**", "/v3/**", "/swagger-ui/**").permitAll()
+                                .requestMatchers("/api/join", "/api/login", "/test/**", "/v3/**", "/swagger-ui/**", "/api/item/**", "/api/items").permitAll()
                                 //regist 추가 - 태양
-                                .requestMatchers("api/regist").authenticated());
+                                .requestMatchers("api/regist", "api/update/**", "api/delete/**").authenticated());
 
         return http.build();
     }
