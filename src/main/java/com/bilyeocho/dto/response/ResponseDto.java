@@ -1,4 +1,4 @@
-package com.bilyeocho.dto;
+package com.bilyeocho.dto.response;
 
 
 import lombok.AllArgsConstructor;

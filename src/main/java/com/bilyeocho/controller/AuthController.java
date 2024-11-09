@@ -1,6 +1,6 @@
 package com.bilyeocho.controller;
 
-import com.bilyeocho.dto.AuthRequest;
+import com.bilyeocho.dto.request.AuthRequest;
 import com.bilyeocho.jwt.TokenInfo;
 import com.bilyeocho.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;

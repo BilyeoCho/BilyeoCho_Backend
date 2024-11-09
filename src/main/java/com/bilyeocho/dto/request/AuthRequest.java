@@ -1,4 +1,4 @@
-package com.bilyeocho.dto;
+package com.bilyeocho.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

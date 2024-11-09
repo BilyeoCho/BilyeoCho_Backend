@@ -1,9 +1,12 @@
 package com.bilyeocho.service;
 
-import com.bilyeocho.domain.Category;
 import com.bilyeocho.domain.Item;
 import com.bilyeocho.domain.User;
-import com.bilyeocho.dto.*;
+import com.bilyeocho.dto.request.ItemRegistRequest;
+import com.bilyeocho.dto.request.ItemUpdateRequest;
+import com.bilyeocho.dto.response.ItemRegistResponse;
+import com.bilyeocho.dto.response.ItemSearchResponse;
+import com.bilyeocho.dto.response.ItemUpdateResponse;
 import com.bilyeocho.repository.ItemRepository;
 import com.bilyeocho.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +26,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public ItemRegistResponseDTO registerItem(ItemRegistRequestDTO requestDTO, MultipartFile itemPhoto) {
+    public ItemRegistResponse registerItem(ItemRegistRequest requestDTO, MultipartFile itemPhoto) {
         User user = userRepository.findByUserId(requestDTO.getUserId())
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다"));
 
@@ -39,27 +42,27 @@ public class ItemServiceImpl implements ItemService {
                 .build();
         Item savedItem = itemRepository.save(newItem);
 
-        return new ItemRegistResponseDTO(savedItem.getId(), true);
+        return new ItemRegistResponse(savedItem.getId(), true);
     }
 
 
     @Override
-    public ItemSearchResponseDTO getItemById(Long id) {
+    public ItemSearchResponse getItemById(Long id) {
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("해당 ID로 물품 조회가 불가능합니다"));
-        return new ItemSearchResponseDTO(item);
+        return new ItemSearchResponse(item);
     }
 
     @Override
-    public List<ItemSearchResponseDTO> getAllItems() {
+    public List<ItemSearchResponse> getAllItems() {
         List<Item> items = itemRepository.findAll();
         return items.stream()
-                .map(ItemSearchResponseDTO::new)
+                .map(ItemSearchResponse::new)
                 .toList();
     }
 
     @Override
-    public ItemUpdateResponseDTO updateItem(Long id, ItemUpdateRequestDTO requestDTO) { // requestDTO로 수정
+    public ItemUpdateResponse updateItem(Long id, ItemUpdateRequest requestDTO) { // requestDTO로 수정
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("해당 ID로 물품 조회가 불가능합니다"));
 
@@ -84,7 +87,7 @@ public class ItemServiceImpl implements ItemService {
         }
 
         itemRepository.save(item);
-        return new ItemUpdateResponseDTO(item);
+        return new ItemUpdateResponse(item);
     }
 
     @Override

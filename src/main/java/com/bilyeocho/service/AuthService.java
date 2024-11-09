@@ -1,7 +1,7 @@
 package com.bilyeocho.service;
 
 import com.bilyeocho.domain.User;
-import com.bilyeocho.dto.AuthRequest;
+import com.bilyeocho.dto.request.AuthRequest;
 import com.bilyeocho.error.CustomException;
 import com.bilyeocho.error.ErrorCode;
 import com.bilyeocho.jwt.JwtTokenProvider;

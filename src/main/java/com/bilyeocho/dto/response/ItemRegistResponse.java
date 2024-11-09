@@ -1,4 +1,4 @@
-package com.bilyeocho.dto;
+package com.bilyeocho.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ItemRegistResponseDTO {
+public class ItemRegistResponse {
     private Long itemId;
     private boolean success;
 }

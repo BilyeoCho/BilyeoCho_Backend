@@ -1,4 +1,4 @@
-package com.bilyeocho.dto;
+package com.bilyeocho.dto.response;
 
 import com.bilyeocho.domain.Category;
 import com.bilyeocho.domain.Item;
@@ -11,22 +11,20 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ItemSearchResponseDTO {
+public class ItemUpdateResponse {
     private Long itemId;
     private String itemName;
     private String itemDescription;
     private Category category;
     private String itemPhoto;
     private Integer rentalDuration;
-    private String userId;
 
-    public ItemSearchResponseDTO(Item item) {
+    public ItemUpdateResponse(Item item) {
         this.itemId = item.getId();
         this.itemName = item.getItemName();
         this.itemDescription = item.getItemDescription();
         this.category = item.getCategory();
         this.itemPhoto = item.getItemPhoto();
         this.rentalDuration = item.getRentalDuration();
-        this.userId = item.getUser().getUserId();
     }
 }

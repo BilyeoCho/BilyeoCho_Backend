@@ -1,4 +1,4 @@
-package com.bilyeocho.dto;
+package com.bilyeocho.dto.request;
 
 import com.bilyeocho.domain.Category;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
-public class ItemRegistRequestDTO {
+public class ItemRegistRequest {
     private MultipartFile itemPhoto;
     private Category category;
     private String itemName;
