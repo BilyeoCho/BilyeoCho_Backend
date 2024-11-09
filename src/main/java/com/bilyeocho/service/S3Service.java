@@ -22,9 +22,6 @@ public class S3Service {
     @Value("${S3_BUCKET_NAME}")
     private String bucket;
 
-
-
-
     public String uploadFile(MultipartFile file) {
         String fileName = "images/" + UUID.randomUUID() + "_" + file.getOriginalFilename();
         try {
@@ -34,10 +31,6 @@ public class S3Service {
         }
         return amazonS3.getUrl(bucket, fileName).toString();
     }
-
-
-
-
 
     public void deleteFile(String fileName) {
         amazonS3.deleteObject(bucket, fileName);

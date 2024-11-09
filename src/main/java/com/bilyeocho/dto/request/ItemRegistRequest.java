@@ -12,6 +12,6 @@ public class ItemRegistRequest {
     private Category category;
     private String itemName;
     private String itemDescription;
-    private int rentalDuration;
     private String userId;
+    private Integer price;
 }
