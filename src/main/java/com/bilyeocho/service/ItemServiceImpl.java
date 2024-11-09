@@ -39,65 +39,7 @@ public class ItemServiceImpl implements ItemService {
                 .build();
         Item savedItem = itemRepository.save(newItem);
 
-        return new ItemRegistResponseDTO(savedItem.getItemId(), true);
-    }
-
-
-    @Override
-    public ItemSearchResponseDTO getItemById(Long id) {
-        Item item = itemRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("해당 ID로 물품 조회가 불가능합니다"));
-        return new ItemSearchResponseDTO(item);
-    }
-
-    @Override
-    public List<ItemSearchResponseDTO> getAllItems() {
-        List<Item> items = itemRepository.findAll();
-        return items.stream()
-                .map(ItemSearchResponseDTO::new)
-                .toList();
-    }
-
-    @Override
-    public ItemUpdateResponseDTO updateItem(Long id, ItemUpdateRequestDTO requestDTO) { // requestDTO로 수정
-        Item item = itemRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("해당 ID로 물품 조회가 불가능합니다"));
-
-        if (requestDTO.getItemName() != null) {
-            item.setItemName(requestDTO.getItemName());
-        }
-        if (requestDTO.getItemPhoto() != null && !requestDTO.getItemPhoto().isEmpty()) {
-            if (item.getItemPhoto() != null) {
-                s3Service.deleteFile(item.getItemPhoto());
-            }
-            String newPhotoUrl = s3Service.uploadFile(requestDTO.getItemPhoto());
-            item.setItemPhoto(newPhotoUrl);
-        }
-        if (requestDTO.getCategory() != null) {
-            item.setCategory(requestDTO.getCategory());
-        }
-        if (requestDTO.getRentalDuration() != null) {
-            item.setRentalDuration(requestDTO.getRentalDuration());
-        }
-        if (requestDTO.getItemDescription() != null) {
-            item.setItemDescription(requestDTO.getItemDescription());
-        }
-
-        itemRepository.save(item);
-        return new ItemUpdateResponseDTO(item);
-    }
-
-    @Override
-    @Transactional
-    public void deleteItem(Long id) {
-        Item item = itemRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("해당 ID로 물품 조회가 불가능합니다"));
-
-        if (item.getItemPhoto() != null) {
-            s3Service.deleteFile(item.getItemPhoto());
-        }
-
-        itemRepository.delete(item);
+        return new ItemRegistResponseDTO(savedItem.getId(), true);
     }
 
 
