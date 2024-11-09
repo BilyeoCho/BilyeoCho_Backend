@@ -29,11 +29,15 @@ public class Item {
     @Column(name = "category", nullable = false)
     private Category category;
 
-    @Column(name = "rental_duration", nullable = false)
-    private Integer rentalDuration;
-
     @Column(name = "item_description", length = 1000, nullable = false) // 필요시 길이 조절
     private String itemDescription;
+
+    @Column(name = "price", nullable = false)
+    private Integer price;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "item_status", nullable = false)
+    private ItemStatus status;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     @JoinColumn(name = "user_id", nullable = false)

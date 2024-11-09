@@ -1,6 +1,7 @@
 package com.bilyeocho.service;
 
 import com.bilyeocho.domain.Item;
+import com.bilyeocho.domain.ItemStatus;
 import com.bilyeocho.domain.User;
 import com.bilyeocho.dto.request.ItemRegistRequest;
 import com.bilyeocho.dto.request.ItemUpdateRequest;
@@ -36,8 +37,9 @@ public class ItemServiceImpl implements ItemService {
                 .itemName(requestDTO.getItemName())
                 .itemPhoto(itemPhotoUrl)
                 .category(requestDTO.getCategory())
-                .rentalDuration(requestDTO.getRentalDuration())
                 .itemDescription(requestDTO.getItemDescription())
+                .status(ItemStatus.AVAILABLE)
+                .price(requestDTO.getPrice())
                 .user(user)
                 .build();
         Item savedItem = itemRepository.save(newItem);
@@ -79,12 +81,20 @@ public class ItemServiceImpl implements ItemService {
         if (requestDTO.getCategory() != null) {
             item.setCategory(requestDTO.getCategory());
         }
-        if (requestDTO.getRentalDuration() != null) {
-            item.setRentalDuration(requestDTO.getRentalDuration());
-        }
         if (requestDTO.getItemDescription() != null) {
             item.setItemDescription(requestDTO.getItemDescription());
         }
+
+        if (requestDTO.getPrice() != null) {
+            item.setPrice(requestDTO.getPrice());
+        }
+
+        if (requestDTO.getStatus() != null){
+            item.setStatus(requestDTO.getStatus());
+        }
+
+
+
 
         itemRepository.save(item);
         return new ItemUpdateResponse(item);
