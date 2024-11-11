@@ -19,8 +19,8 @@ public interface ItemService {
     List<ItemSearchResponse> getAllItems();
 
     //물품 업데이트
-    ItemUpdateResponse updateItem(Long id, ItemUpdateRequest requestDTO);
+    ItemUpdateResponse updateItem(Long id, ItemUpdateRequest requestDTO, String userId);
 
     //물품 삭제
-    public void deleteItem(Long id);
+    public void deleteItem(Long itemId, String userId);
 }

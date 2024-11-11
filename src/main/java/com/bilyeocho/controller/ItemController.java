@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,14 +49,17 @@ public class ItemController {
         return ResponseEntity.ok(item);
     }
 
-    //물품 업데이트 API
+    // 물품 업데이트 API
     @Operation(summary = "물품 업데이트", description = "물품의 정보를 수정합니다")
     @PreAuthorize("isAuthenticated()")
     @PutMapping(value = "/update/{id}", consumes = { "multipart/form-data" })
     public ResponseEntity<ItemUpdateResponse> updateItem(
             @PathVariable Long id,
-            @ModelAttribute ItemUpdateRequest requestDTO) {
-        ItemUpdateResponse updatedItem = itemService.updateItem(id, requestDTO);
+            @ModelAttribute ItemUpdateRequest requestDTO,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        String userId = userDetails.getUsername();
+        ItemUpdateResponse updatedItem = itemService.updateItem(id, requestDTO, userId);
         return ResponseEntity.ok(updatedItem);
     }
 
@@ -62,8 +67,8 @@ public class ItemController {
     @Operation(summary = "물품 삭제", description = "특정 ID의 물품을 삭제합니다.")
     @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteItem(@PathVariable Long id) {
-        itemService.deleteItem(id);
+    public ResponseEntity<Void> deleteItem(@PathVariable Long id, @AuthenticationPrincipal UserDetails currentUser) {
+        itemService.deleteItem(id, currentUser.getUsername()); // getUsername() 메서드로 userId 추출
         return ResponseEntity.noContent().build(); // 상태 코드 204 반환
     }
 }
