@@ -93,9 +93,6 @@ public class ItemServiceImpl implements ItemService {
             item.setStatus(requestDTO.getStatus());
         }
 
-
-
-
         itemRepository.save(item);
         return new ItemUpdateResponse(item);
     }
