@@ -43,7 +43,7 @@ public class SecurityConfig {
                         authorizeRequests
                                 .requestMatchers("/api/join", "/api/login", "/test/**", "/v3/**", "/swagger-ui/**", "/api/item/**", "/api/items").permitAll()
                                 //regist 추가 - 태양
-                                .requestMatchers("/api/regist", "/api/update/**", "/api/delete/**").authenticated());
+                                .requestMatchers("api/regist", "api/update/**", "api/delete/**","api/rents/**").authenticated());
 
         return http.build();
     }
