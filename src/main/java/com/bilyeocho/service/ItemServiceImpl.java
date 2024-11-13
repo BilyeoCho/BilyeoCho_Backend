@@ -8,12 +8,15 @@ import com.bilyeocho.dto.request.ItemUpdateRequest;
 import com.bilyeocho.dto.response.ItemRegistResponse;
 import com.bilyeocho.dto.response.ItemSearchResponse;
 import com.bilyeocho.dto.response.ItemUpdateResponse;
+import com.bilyeocho.error.CustomException;
+import com.bilyeocho.error.ErrorCode;
 import com.bilyeocho.repository.ItemRepository;
 import com.bilyeocho.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
 
 import java.util.List;
 
@@ -64,9 +67,14 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemUpdateResponse updateItem(Long id, ItemUpdateRequest requestDTO) { // requestDTO로 수정
+    public ItemUpdateResponse updateItem(Long id, ItemUpdateRequest requestDTO, String userId) {
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("해당 ID로 물품 조회가 불가능합니다"));
+
+        // 물품 등록자와 요청한 사용자의 ID가 일치하는지 확인
+        if (!item.getUser().getUserId().equals(userId)) {
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        }
 
         if (requestDTO.getItemName() != null) {
             item.setItemName(requestDTO.getItemName());
@@ -84,12 +92,10 @@ public class ItemServiceImpl implements ItemService {
         if (requestDTO.getItemDescription() != null) {
             item.setItemDescription(requestDTO.getItemDescription());
         }
-
         if (requestDTO.getPrice() != null) {
             item.setPrice(requestDTO.getPrice());
         }
-
-        if (requestDTO.getStatus() != null){
+        if (requestDTO.getStatus() != null) {
             item.setStatus(requestDTO.getStatus());
         }
 
@@ -99,9 +105,13 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public void deleteItem(Long id) {
-        Item item = itemRepository.findById(id)
+    public void deleteItem(Long itemId, String userId) {
+        Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new RuntimeException("해당 ID로 물품 조회가 불가능합니다"));
+
+        if (!item.getUser().getUserId().equals(userId)) {
+            throw new CustomException(ErrorCode.FORBIDDEN); // 권한이 없는 경우 예외 발생
+        }
 
         if (item.getItemPhoto() != null) {
             s3Service.deleteFile(item.getItemPhoto());
