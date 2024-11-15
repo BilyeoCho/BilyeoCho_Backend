@@ -23,4 +23,7 @@ public interface ItemService {
 
     //물품 삭제
     public void deleteItem(Long itemId, String userId);
+
+    //최신 물품 4개 불러오기
+    public List<ItemSearchResponse> getLatestItems();
 }

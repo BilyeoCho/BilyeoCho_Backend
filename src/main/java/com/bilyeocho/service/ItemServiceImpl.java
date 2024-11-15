@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -118,5 +119,13 @@ public class ItemServiceImpl implements ItemService {
         }
 
         itemRepository.delete(item);
+    }
+
+    @Override
+    public List<ItemSearchResponse> getLatestItems() {
+        List<Item> latestItems = itemRepository.findTop4ByOrderByIdDesc();
+        return latestItems.stream()
+                .map(ItemSearchResponse::new)
+                .collect(Collectors.toList());
     }
 }

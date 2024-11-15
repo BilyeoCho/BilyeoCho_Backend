@@ -71,4 +71,11 @@ public class ItemController {
         itemService.deleteItem(id, currentUser.getUsername()); // getUsername() 메서드로 userId 추출
         return ResponseEntity.noContent().build(); // 상태 코드 204 반환
     }
+
+    @Operation(summary = "최신 물품 불러오기", description = "최신 물품 4개 불러오기.")
+    @GetMapping("/latest")
+    public ResponseEntity<List<ItemSearchResponse>> getLatestItems() {
+        List<ItemSearchResponse> latestItems = itemService.getLatestItems();
+        return ResponseEntity.ok(latestItems);
+    }
 }
