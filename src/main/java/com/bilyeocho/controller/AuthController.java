@@ -4,6 +4,8 @@ import com.bilyeocho.dto.request.AuthRequest;
 import com.bilyeocho.jwt.TokenInfo;
 import com.bilyeocho.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -32,9 +34,15 @@ public class AuthController {
 
     @PostMapping("/login")
     @Operation(summary = "로그인", description = "유저 로그인")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "로그인 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청 (예: 비밀번호 불일치)"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자 (존재하지 않는 ID)"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
     public ResponseEntity<TokenInfo> login(@RequestBody AuthRequest loginRequest, HttpServletResponse response) {
         TokenInfo tokenInfo = authService.login(loginRequest, response);
-        return ResponseEntity.ok(tokenInfo); // 로그인 성공 시 토큰 반환
+        return ResponseEntity.ok(tokenInfo);
     }
 
 
@@ -42,6 +50,6 @@ public class AuthController {
     @Operation(summary = "토큰 재발급", description = "토큰 재발급")
     public ResponseEntity<TokenInfo> reissueToken(HttpServletRequest request, HttpServletResponse response) {
         TokenInfo newTokenInfo = authService.reissueToken(request, response);
-        return ResponseEntity.ok(newTokenInfo); // 새로운 토큰 반환
+        return ResponseEntity.ok(newTokenInfo);
     }
 }
