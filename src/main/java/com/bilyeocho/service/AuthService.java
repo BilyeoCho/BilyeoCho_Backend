@@ -36,6 +36,13 @@ public class AuthService  {
             throw new CustomException(ErrorCode.ALREADY_EXIST_MEMBER);
         }
 
+        if (joinRequest.getUserName() == null || joinRequest.getUserName().isEmpty()) {
+            throw new CustomException(ErrorCode.MISSING_USER_NAME);
+        }
+        if (joinRequest.getUserId() == null || joinRequest.getUserId().isEmpty()) {
+            throw new CustomException(ErrorCode.MISSING_USER_ID);
+        }
+
         // 이름, 이메일 추가 필요
         User joinUser = User.builder()
                 .userId(joinRequest.getUserId())
