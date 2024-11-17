@@ -32,7 +32,14 @@ public class S3Service {
         return amazonS3.getUrl(bucket, fileName).toString();
     }
 
-    public void deleteFile(String fileName) {
-        amazonS3.deleteObject(bucket, fileName);
+    public void deleteFile(String fileUrl) {
+        try {
+            String fileName = fileUrl.substring(fileUrl.indexOf("images/"));
+            amazonS3.deleteObject(bucket, fileName);
+            System.out.println("S3 파일 삭제 성공: " + fileName);
+        } catch (Exception e) {
+            System.err.println("S3 파일 삭제 실패: " + e.getMessage());
+            throw new RuntimeException("S3 파일 삭제에 실패했습니다.", e);
+        }
     }
 }

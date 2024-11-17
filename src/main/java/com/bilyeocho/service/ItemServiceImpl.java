@@ -2,6 +2,7 @@ package com.bilyeocho.service;
 
 import com.bilyeocho.domain.Item;
 import com.bilyeocho.domain.ItemStatus;
+import com.bilyeocho.domain.Role;
 import com.bilyeocho.domain.User;
 import com.bilyeocho.dto.request.ItemRegistRequest;
 import com.bilyeocho.dto.request.ItemUpdateRequest;
@@ -11,6 +12,7 @@ import com.bilyeocho.dto.response.ItemUpdateResponse;
 import com.bilyeocho.error.CustomException;
 import com.bilyeocho.error.ErrorCode;
 import com.bilyeocho.repository.ItemRepository;
+import com.bilyeocho.repository.RentRepository;
 import com.bilyeocho.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,7 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
     private final S3Service s3Service;
+    private final RentRepository rentRepository;
 
     @Override
     @Transactional
@@ -110,14 +113,24 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new RuntimeException("해당 ID로 물품 조회가 불가능합니다"));
 
-        if (!item.getUser().getUserId().equals(userId)) {
-            throw new CustomException(ErrorCode.FORBIDDEN); // 권한이 없는 경우 예외 발생
+        // 요청을 보낸 사용자 조회
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다"));
+
+        // 관리자 계정인지 확인
+        if (!user.getRole().equals(Role.ADMIN) && !item.getUser().getUserId().equals(userId)) {
+            throw new CustomException(ErrorCode.FORBIDDEN);
         }
 
+        // rents 테이블의 관련 데이터 삭제
+        rentRepository.deleteByItem(item);
+
+        // S3의 이미지 삭제
         if (item.getItemPhoto() != null) {
             s3Service.deleteFile(item.getItemPhoto());
         }
 
+        // item 삭제
         itemRepository.delete(item);
     }
 

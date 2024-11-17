@@ -12,4 +12,5 @@ import java.util.Optional;
 public interface RentRepository extends JpaRepository<Rent, Long> {
 
     Optional<Rent> findByItemAndUser(Item item, User user);
+    void deleteByItem(Item item);
 }
