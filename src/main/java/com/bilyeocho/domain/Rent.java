@@ -32,10 +32,4 @@ public class Rent {
     @Column(name = "end_time", nullable = false)
     private LocalDateTime endTime;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "rent_status", nullable = false)
-    private ItemStatus status;
-
-    @Column(name = "total_price", nullable = false)
-    private Integer totalPrice;
 }

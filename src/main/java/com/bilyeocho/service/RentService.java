@@ -33,8 +33,31 @@ public class RentService {
             throw new RuntimeException("물품이 대여 가능한 상태가 아닙니다.");
         }
 
+        Rent existingRent = rentRepository.findByItemAndUser(item, renter).orElse(null);
+
+        if (existingRent != null) {
+            existingRent.setStartTime(rentRequest.getStartTime());
+            existingRent.setEndTime(rentRequest.getEndTime());
+
+            item.setStatus(ItemStatus.RENTED);
+            itemRepository.save(item);
+
+            rentRepository.save(existingRent);
+
+            return RentResponse.builder()
+                    .rentId(existingRent.getId())
+                    .itemId(item.getId().toString())
+                    .renterId(renter.getId().toString())
+                    .startTime(existingRent.getStartTime())
+                    .endTime(existingRent.getEndTime())
+                    .rentStatus(item.getStatus())
+                    .build();
+        }
+
+
         Rent rent = Rent.builder()
                 .item(item)
+                .user(renter)
                 .startTime(rentRequest.getStartTime())
                 .endTime(rentRequest.getEndTime())
                 .build();
@@ -50,7 +73,7 @@ public class RentService {
                 .renterId(renter.getId().toString())
                 .startTime(savedRent.getStartTime())
                 .endTime(savedRent.getEndTime())
-                .rentStatus(savedRent.getStatus())
+                .rentStatus(item.getStatus())
                 .build();
     }
 
@@ -59,7 +82,6 @@ public class RentService {
         Rent rent = rentRepository.findById(rentId)
                 .orElseThrow(() -> new RuntimeException("대여 여부를 확인 할 수 없습니다."));
 
-        rent.setStatus(ItemStatus.AVAILABLE);
         rent.getItem().setStatus(ItemStatus.AVAILABLE);
 
         rentRepository.save(rent);
@@ -69,11 +91,8 @@ public class RentService {
                 .rentId(rent.getId())
                 .itemId(rent.getItem().getId().toString())
                 .renterId(rent.getItem().getUser().getId().toString())
-                .startTime(rent.getStartTime())
-                .endTime(rent.getEndTime())
-                .rentStatus(rent.getStatus())
+                .rentStatus(rent.getItem().getStatus())
                 .build();
     }
 
-    // 예약 기능 추가 필요
 }
