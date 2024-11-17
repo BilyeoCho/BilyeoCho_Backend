@@ -39,7 +39,7 @@ public class Item {
     @Column(name = "item_status", nullable = false)
     private ItemStatus status;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
