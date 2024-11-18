@@ -6,7 +6,11 @@ import com.bilyeocho.service.RentService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/rents")
@@ -27,5 +31,23 @@ public class RentController {
     public ResponseEntity<RentResponse> returnItem(@PathVariable Long rentId) {
         RentResponse rentResponse = rentService.returnRent(rentId);
         return ResponseEntity.ok(rentResponse);
+    }
+
+    // 내가 빌린 물품 조회
+    @GetMapping("/borrowed")
+    @Operation(summary = "빌린 물품", description = "사용자가 빌린 물품들")
+    public ResponseEntity<List<RentResponse>> getBorrowedItems(@AuthenticationPrincipal UserDetails userDetails) {
+        String userId = userDetails.getUsername(); // 현재 로그인한 사용자의 ID
+        List<RentResponse> borrowedItems = rentService.getBorrowedItems(userId);
+        return ResponseEntity.ok(borrowedItems);
+    }
+
+    // 내가 빌려준 물품 조회
+    @GetMapping("/lent")
+    @Operation(summary = "빌려준 물품", description = "사용자가 빌려준 물품")
+    public ResponseEntity<List<RentResponse>> getLentItems(@AuthenticationPrincipal UserDetails userDetails) {
+        String userId = userDetails.getUsername(); // 현재 로그인한 사용자의 ID
+        List<RentResponse> lentItems = rentService.getLentItems(userId);
+        return ResponseEntity.ok(lentItems);
     }
 }
