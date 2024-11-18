@@ -26,4 +26,7 @@ public interface ItemService {
 
     //최신 물품 4개 불러오기
     public List<ItemSearchResponse> getLatestItems();
+
+    //사용자별 등록 물품 조회
+    List<ItemSearchResponse> getItemsByUserId(String userId);
 }

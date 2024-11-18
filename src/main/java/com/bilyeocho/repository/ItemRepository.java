@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Long> {
     List<Item> findTop4ByOrderByIdDesc();
+    List<Item> findByUserUserId(String userId);
 }

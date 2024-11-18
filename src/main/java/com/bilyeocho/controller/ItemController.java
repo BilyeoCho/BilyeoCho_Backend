@@ -34,7 +34,7 @@ public class ItemController {
     }
 
     // 물품 조회 API
-    @Operation(summary = "물품 조회", description = "물품아이디로 물품을 검색합니다")
+    @Operation(summary = "물품 조회", description = "물품 ID로 물품을 검색합니다")
     @GetMapping(value = "/item/{id}")
     public ResponseEntity<ItemSearchResponse> getItemById(@PathVariable Long id) {
         ItemSearchResponse item = itemService.getItemById(id);
@@ -50,7 +50,7 @@ public class ItemController {
     }
 
     // 물품 업데이트 API
-    @Operation(summary = "물품 업데이트", description = "물품의 정보를 수정합니다")
+    @Operation(summary = "물품 업데이트", description = "특정 ID의 물품 정보를 수정합니다")
     @PreAuthorize("isAuthenticated()")
     @PutMapping(value = "/update/{id}", consumes = { "multipart/form-data" })
     public ResponseEntity<ItemUpdateResponse> updateItem(
@@ -72,10 +72,18 @@ public class ItemController {
         return ResponseEntity.noContent().build(); // 상태 코드 204 반환
     }
 
-    @Operation(summary = "최신 물품 불러오기", description = "최신 물품 4개 불러오기.")
+    @Operation(summary = "최신 물품 불러오기", description = "최신 물품 4개를 불러옵니다.")
     @GetMapping("/latest")
     public ResponseEntity<List<ItemSearchResponse>> getLatestItems() {
         List<ItemSearchResponse> latestItems = itemService.getLatestItems();
         return ResponseEntity.ok(latestItems);
+    }
+
+    @Operation(summary = "등록한 물품 조회", description = "사용자가 등록한 모든 물품을 조회합니다.")
+    @GetMapping("/myitems")
+    public ResponseEntity<List<ItemSearchResponse>> getMyItems(@AuthenticationPrincipal UserDetails userDetails) {
+        String userId = userDetails.getUsername();
+        List<ItemSearchResponse> items = itemService.getItemsByUserId(userId);
+        return ResponseEntity.ok(items);
     }
 }
