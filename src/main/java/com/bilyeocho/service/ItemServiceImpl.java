@@ -141,4 +141,12 @@ public class ItemServiceImpl implements ItemService {
                 .map(ItemSearchResponse::new)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<ItemSearchResponse> getItemsByUserId(String userId) {
+        List<Item> items = itemRepository.findByUserUserId(userId);
+        return items.stream()
+                .map(ItemSearchResponse::new)
+                .toList();
+    }
 }
