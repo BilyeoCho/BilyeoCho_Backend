@@ -29,16 +29,14 @@ public class ReviewService {
 
     @Transactional
     public void createReview(ReviewRequest reviewRequest, MultipartFile reviewPhoto) {
-        User user = userRepository.findById(reviewRequest.getUserId())
+        User user = userRepository.findByUserId(String.valueOf(reviewRequest.getUserId()))
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         Item item = itemRepository.findById(reviewRequest.getItemId())
                 .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
 
-        String reviewPhotoUrl = null;
-        if (reviewPhoto != null && !reviewPhoto.isEmpty()) {
-            reviewPhotoUrl = s3Service.uploadFile(reviewPhoto);
-        }
+        String reviewPhotoUrl =  s3Service.uploadFile(reviewPhoto);
+
 
         Review review = Review.builder()
                 .rate(reviewRequest.getRate())

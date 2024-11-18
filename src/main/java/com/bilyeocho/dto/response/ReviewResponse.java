@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 public class ReviewResponse {
 
     private Long id;
-    private double rate;
+    private String rate;
     private String reviewTitle;
     private String reviewPhoto;
     private String content;

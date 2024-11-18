@@ -5,6 +5,7 @@ import com.bilyeocho.dto.request.ReviewRequest;
 import com.bilyeocho.dto.response.ReviewResponse;
 import com.bilyeocho.service.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/reviews")
+@Tag(name = "리뷰", description = "리뷰 작성, 불러오기, 수정, 삭제")
 @RequiredArgsConstructor
 public class ReviewController {
 
@@ -22,7 +24,7 @@ public class ReviewController {
 
     @PostMapping("/write")
     @Operation(summary = "리뷰 작성", description = "사용자가 물품에 대해 리뷰를 작성")
-    public ResponseEntity<String> writeReview(@RequestBody ReviewRequest reviewRequest, @RequestParam(value = "reviewPhoto", required = false) MultipartFile reviewPhoto) {
+    public ResponseEntity<String> writeReview(@ModelAttribute ReviewRequest reviewRequest, @RequestParam(value = "reviewPhoto", required = false) MultipartFile reviewPhoto) {
         reviewService.createReview(reviewRequest, reviewPhoto);
         return new ResponseEntity<>("리뷰 작성 성공", HttpStatus.OK);
     }
