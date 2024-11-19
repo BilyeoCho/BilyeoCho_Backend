@@ -4,6 +4,7 @@ import com.bilyeocho.dto.request.RentRequest;
 import com.bilyeocho.dto.response.RentResponse;
 import com.bilyeocho.service.RentService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@Tag(name = "대여", description = "물건 대여 및 반납")
 @RequestMapping("/api/rents")
 @RequiredArgsConstructor
 public class RentController {
