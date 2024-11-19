@@ -3,6 +3,8 @@ package com.bilyeocho.service;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.bilyeocho.error.CustomException;
+import com.bilyeocho.error.ErrorCode;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,7 +29,7 @@ public class S3Service {
         try {
             amazonS3.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), null));
         } catch (IOException e) {
-            throw new RuntimeException("파일 업로드에 실패했습니다.", e);
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
         return amazonS3.getUrl(bucket, fileName).toString();
     }
@@ -39,7 +41,7 @@ public class S3Service {
             System.out.println("S3 파일 삭제 성공: " + fileName);
         } catch (Exception e) {
             System.err.println("S3 파일 삭제 실패: " + e.getMessage());
-            throw new RuntimeException("S3 파일 삭제에 실패했습니다.", e);
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
 }
