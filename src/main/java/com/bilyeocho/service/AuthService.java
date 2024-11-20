@@ -2,6 +2,8 @@ package com.bilyeocho.service;
 
 import com.bilyeocho.domain.User;
 import com.bilyeocho.dto.request.AuthRequest;
+import com.bilyeocho.error.CustomException;
+import com.bilyeocho.error.ErrorCode;
 import com.bilyeocho.jwt.JwtTokenProvider;
 import com.bilyeocho.jwt.TokenInfo;
 import com.bilyeocho.repository.UserRepository;
@@ -21,24 +23,24 @@ import java.util.Optional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class AuthService {
+public class AuthService  {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
     private final AuthenticationManager authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
 
-    public void join(AuthRequest joinRequest) {
+    public void join(AuthRequest joinRequest){
         Optional<User> user = userRepository.findByUserId(joinRequest.getUserId());
-        if (user.isPresent()) {
-            throw new RuntimeException("User already exists with the given ID.");
+        if(user.isPresent()){
+            throw new CustomException(ErrorCode.ALREADY_EXIST_MEMBER);
         }
 
         if (joinRequest.getUserName() == null || joinRequest.getUserName().isEmpty()) {
-            throw new RuntimeException("User name is missing or empty.");
+            throw new CustomException(ErrorCode.MISSING_USER_NAME);
         }
         if (joinRequest.getUserId() == null || joinRequest.getUserId().isEmpty()) {
-            throw new RuntimeException("User ID is missing or empty.");
+            throw new CustomException(ErrorCode.MISSING_USER_ID);
         }
 
         // 이름, 이메일 추가 필요
@@ -51,30 +53,23 @@ public class AuthService {
         userRepository.save(joinUser);
     }
 
-    public TokenInfo login(AuthRequest loginRequest, HttpServletResponse response) {
-        User user = userRepository.findByUserId(loginRequest.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found with the given ID."));
-
-        if (!encoder.matches(loginRequest.getUserPwd(), user.getUserPassword())) {
-            throw new RuntimeException("Password mismatch.");
+    public TokenInfo login(AuthRequest loginRequest, HttpServletResponse response){
+        User user = userRepository.findByUserId(loginRequest.getUserId()).orElseThrow(() -> new CustomException(ErrorCode.UNAUTHORIZED));
+        if(!encoder.matches(loginRequest.getUserPwd(), user.getUserPassword())){
+            throw new CustomException(ErrorCode.MISMATCHED_PASSWORD);
         }
-
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(loginRequest.getUserId(), loginRequest.getUserPwd());
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginRequest.getUserId(), loginRequest.getUserPwd());
         Authentication authentication = authenticationManagerBuilder.authenticate(authenticationToken);
         return jwtTokenProvider.generateToken(authentication, response);
     }
 
-    public TokenInfo reissueToken(HttpServletRequest request, HttpServletResponse response) {
+    public TokenInfo reissueToken(HttpServletRequest request, HttpServletResponse response){
         Cookie[] cookies = request.getCookies();
         String refreshToken = "";
 
         for (Cookie cookie : cookies) {
             if (cookie.getName().equals("refreshToken"))
                 refreshToken = cookie.getValue();
-        }
-        if (refreshToken.isEmpty()) {
-            throw new RuntimeException("Refresh token is missing or invalid.");
         }
         return jwtTokenProvider.reissueToken(refreshToken, response);
     }

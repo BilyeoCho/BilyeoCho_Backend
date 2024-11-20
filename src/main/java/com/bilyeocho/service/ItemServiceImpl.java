@@ -9,6 +9,8 @@ import com.bilyeocho.dto.request.ItemUpdateRequest;
 import com.bilyeocho.dto.response.ItemRegistResponse;
 import com.bilyeocho.dto.response.ItemSearchResponse;
 import com.bilyeocho.dto.response.ItemUpdateResponse;
+import com.bilyeocho.error.CustomException;
+import com.bilyeocho.error.ErrorCode;
 import com.bilyeocho.repository.ItemRepository;
 import com.bilyeocho.repository.RentRepository;
 import com.bilyeocho.repository.UserRepository;
@@ -75,7 +77,7 @@ public class ItemServiceImpl implements ItemService {
 
         // 물품 등록자와 요청한 사용자의 ID가 일치하는지 확인
         if (!item.getUser().getUserId().equals(userId)) {
-            throw new RuntimeException("You are not authorized to perform this action");
+            throw new CustomException(ErrorCode.FORBIDDEN);
         }
 
         if (requestDTO.getItemName() != null) {
@@ -116,9 +118,8 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다"));
 
         // 관리자 계정인지 확인
-        // 관리자 계정인지 확인
         if (!user.getRole().equals(Role.ADMIN) && !item.getUser().getUserId().equals(userId)) {
-            throw new RuntimeException("You are not authorized to perform this action");
+            throw new CustomException(ErrorCode.FORBIDDEN);
         }
 
         // rents 테이블의 관련 데이터 삭제

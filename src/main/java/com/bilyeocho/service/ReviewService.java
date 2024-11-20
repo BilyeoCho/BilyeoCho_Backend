@@ -5,6 +5,8 @@ import com.bilyeocho.domain.Review;
 import com.bilyeocho.domain.User;
 import com.bilyeocho.dto.request.ReviewRequest;
 import com.bilyeocho.dto.response.ReviewResponse;
+import com.bilyeocho.error.CustomException;
+import com.bilyeocho.error.ErrorCode;
 import com.bilyeocho.repository.ItemRepository;
 import com.bilyeocho.repository.ReviewRepository;
 import com.bilyeocho.repository.UserRepository;
@@ -28,12 +30,13 @@ public class ReviewService {
     @Transactional
     public void createReview(ReviewRequest reviewRequest, MultipartFile reviewPhoto) {
         User user = userRepository.findByUserId(String.valueOf(reviewRequest.getUserId()))
-                .orElseThrow(() -> new RuntimeException("User not found."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         Item item = itemRepository.findById(reviewRequest.getItemId())
-                .orElseThrow(() -> new RuntimeException("Item not found."));
+                .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
 
-        String reviewPhotoUrl = s3Service.uploadFile(reviewPhoto);
+        String reviewPhotoUrl =  s3Service.uploadFile(reviewPhoto);
+
 
         Review review = Review.builder()
                 .rate(reviewRequest.getRate())
@@ -50,7 +53,7 @@ public class ReviewService {
     @Transactional
     public ReviewResponse getReview(Long reviewId) {
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new RuntimeException("Review not found."));
+                .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_NOT_FOUND));
 
         return new ReviewResponse(
                 review.getId(),
@@ -66,7 +69,7 @@ public class ReviewService {
     @Transactional
     public List<ReviewResponse> getAllReviewsByUser(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         List<Review> reviews = reviewRepository.findByUser(user);
 
@@ -83,10 +86,11 @@ public class ReviewService {
                 .collect(Collectors.toList());
     }
 
+
     @Transactional
     public List<ReviewResponse> getReviewsByItemId(Long itemId) {
         Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new RuntimeException("Item not found."));
+                .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
 
         List<Review> reviews = reviewRepository.findByItem(item);
 
@@ -103,10 +107,11 @@ public class ReviewService {
                 .collect(Collectors.toList());
     }
 
+
     @Transactional
     public void updateReview(Long reviewId, ReviewRequest reviewRequest, MultipartFile reviewPhoto) {
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new RuntimeException("Review not found."));
+                .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_NOT_FOUND));
 
         review.setRate(reviewRequest.getRate());
         review.setReviewTitle(reviewRequest.getReviewTitle());
@@ -122,12 +127,13 @@ public class ReviewService {
         }
 
         reviewRepository.save(review);
+
     }
 
     @Transactional
     public void deleteReview(Long reviewId) {
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new RuntimeException("Review not found."));
+                .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_NOT_FOUND));
 
         if (review.getReviewPhoto() != null) {
             s3Service.deleteFile(review.getReviewPhoto());
