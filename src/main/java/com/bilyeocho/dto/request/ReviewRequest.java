@@ -11,7 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class ReviewRequest {
 
     private String rate;
-    private String reviewTitle;
     private MultipartFile reviewPhoto;
     private String content;
     private Long userId;

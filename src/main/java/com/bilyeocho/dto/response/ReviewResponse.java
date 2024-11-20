@@ -11,7 +11,6 @@ public class ReviewResponse {
 
     private Long id;
     private String rate;
-    private String reviewTitle;
     private String reviewPhoto;
     private String content;
     private String userName;
