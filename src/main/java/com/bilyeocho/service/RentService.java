@@ -6,6 +6,8 @@ import com.bilyeocho.domain.Rent;
 import com.bilyeocho.domain.User;
 import com.bilyeocho.dto.request.RentRequest;
 import com.bilyeocho.dto.response.RentResponse;
+import com.bilyeocho.error.CustomException;
+import com.bilyeocho.error.ErrorCode;
 import com.bilyeocho.repository.ItemRepository;
 import com.bilyeocho.repository.RentRepository;
 import com.bilyeocho.repository.UserRepository;
@@ -24,13 +26,13 @@ public class RentService {
     @Transactional
     public RentResponse createRent(RentRequest rentRequest) {
         Item item = itemRepository.findById(Long.parseLong(rentRequest.getItemId()))
-                .orElseThrow(() -> new RuntimeException("물품을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
 
         User renter = userRepository.findById(Long.parseLong(rentRequest.getRenterId()))
-                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         if (item.getStatus() != ItemStatus.AVAILABLE) {
-            throw new RuntimeException("물품이 대여 가능한 상태가 아닙니다.");
+            throw new CustomException(ErrorCode.ALREADY_RENTED);
         }
 
         Rent existingRent = rentRepository.findByItemAndUser(item, renter).orElse(null);
@@ -53,7 +55,6 @@ public class RentService {
                     .rentStatus(item.getStatus())
                     .build();
         }
-
 
         Rent rent = Rent.builder()
                 .item(item)
@@ -78,9 +79,13 @@ public class RentService {
     }
 
     @Transactional
-    public RentResponse returnRent(Long rentId) {
+    public RentResponse returnRent(Long rentId, Long renterId) {
         Rent rent = rentRepository.findById(rentId)
-                .orElseThrow(() -> new RuntimeException("대여 여부를 확인 할 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.RENT_NOT_FOUND));
+
+        if (!rent.getUser().getId().equals(renterId)) {
+            throw new CustomException(ErrorCode.FORBIDDEN_RENT_ACCESS);
+        }
 
         rent.getItem().setStatus(ItemStatus.AVAILABLE);
 
@@ -94,5 +99,4 @@ public class RentService {
                 .rentStatus(rent.getItem().getStatus())
                 .build();
     }
-
 }

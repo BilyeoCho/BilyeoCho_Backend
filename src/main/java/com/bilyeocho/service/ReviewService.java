@@ -40,7 +40,6 @@ public class ReviewService {
 
         Review review = Review.builder()
                 .rate(reviewRequest.getRate())
-                .reviewTitle(reviewRequest.getReviewTitle())
                 .reviewPhoto(reviewPhotoUrl)
                 .content(reviewRequest.getContent())
                 .user(user)
@@ -58,7 +57,6 @@ public class ReviewService {
         return new ReviewResponse(
                 review.getId(),
                 review.getRate(),
-                review.getReviewTitle(),
                 review.getReviewPhoto(),
                 review.getContent(),
                 review.getUser().getUsername(),
@@ -77,7 +75,6 @@ public class ReviewService {
                 .map(review -> new ReviewResponse(
                         review.getId(),
                         review.getRate(),
-                        review.getReviewTitle(),
                         review.getReviewPhoto(),
                         review.getContent(),
                         review.getUser().getUsername(),
@@ -98,7 +95,6 @@ public class ReviewService {
                 .map(review -> new ReviewResponse(
                         review.getId(),
                         review.getRate(),
-                        review.getReviewTitle(),
                         review.getReviewPhoto(),
                         review.getContent(),
                         review.getUser().getUsername(),
@@ -114,7 +110,6 @@ public class ReviewService {
                 .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_NOT_FOUND));
 
         review.setRate(reviewRequest.getRate());
-        review.setReviewTitle(reviewRequest.getReviewTitle());
         review.setContent(reviewRequest.getContent());
 
         if (reviewPhoto != null && !reviewPhoto.isEmpty()) {
