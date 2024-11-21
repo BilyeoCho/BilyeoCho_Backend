@@ -19,4 +19,5 @@ public class RentResponse {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private ItemStatus rentStatus;
+
 }

@@ -15,6 +15,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class RentService {
@@ -55,6 +58,7 @@ public class RentService {
                     .rentStatus(item.getStatus())
                     .build();
         }
+
 
         Rent rent = Rent.builder()
                 .item(item)
@@ -99,4 +103,35 @@ public class RentService {
                 .rentStatus(rent.getItem().getStatus())
                 .build();
     }
+
+    // 내가 빌린 물품 조회
+    public List<RentResponse> getBorrowedItems(String userId) {
+        List<Rent> rents = rentRepository.findByUserUserId(userId);
+        return rents.stream()
+                .map(rent -> RentResponse.builder()
+                        .rentId(rent.getId())
+                        .itemId(rent.getItem().getId().toString())
+                        .renterId(rent.getUser().getUserId())
+                        .startTime(rent.getStartTime())
+                        .endTime(rent.getEndTime())
+                        .rentStatus(rent.getItem().getStatus())
+                        .build())
+                .toList();
+    }
+
+    // 내가 빌려준 물품 조회
+    public List<RentResponse> getLentItems(String userId) {
+        List<Rent> rents = rentRepository.findByItemUserUserId(userId);
+        return rents.stream()
+                .map(rent -> RentResponse.builder()
+                        .rentId(rent.getId())
+                        .itemId(rent.getItem().getId().toString())
+                        .renterId(rent.getUser().getUserId())
+                        .startTime(rent.getStartTime())
+                        .endTime(rent.getEndTime())
+                        .rentStatus(rent.getItem().getStatus())
+                        .build())
+                .toList();
+    }
+
 }

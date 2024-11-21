@@ -93,6 +93,10 @@ public class User implements UserDetails {
         return true;  // 계정이 만료되지 않음
     }
 
+    public String getUserName() {
+        return userName; // 명시적으로 이름 반환 메서드 추가
+    }
+
     @Override
     public boolean isAccountNonLocked() {
         return true;  // 계정이 잠기지 않음
