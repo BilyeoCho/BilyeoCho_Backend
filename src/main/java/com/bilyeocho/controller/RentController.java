@@ -30,8 +30,8 @@ public class RentController {
 
     @PutMapping("/return/{rentId}")
     @Operation(summary = "반납", description = "사용했던 물건을 반납")
-    public ResponseEntity<RentResponse> returnItem(@PathVariable Long rentId) {
-        RentResponse rentResponse = rentService.returnRent(rentId);
+    public ResponseEntity<RentResponse> returnItem(@PathVariable Long rentId, @RequestParam Long renterId) {
+        RentResponse rentResponse = rentService.returnRent(rentId, renterId);
         return ResponseEntity.ok(rentResponse);
     }
 

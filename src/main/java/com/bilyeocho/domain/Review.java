@@ -21,9 +21,6 @@ public class Review {
     @JoinColumn(name = "rate", nullable = false)
     private String rate;
 
-    @JoinColumn(name = "review_title", nullable = false)
-    private String reviewTitle;
-
     @JoinColumn(name = "review_photo")
     private String reviewPhoto;
 
@@ -33,7 +30,6 @@ public class Review {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
 
     @ManyToOne
     @JoinColumn(name = "item_id", nullable = false)

@@ -22,11 +22,14 @@ public enum ErrorCode {
 
     /* 403 FORBIDDEN : 권한이 없는 사용자 */
     FORBIDDEN(HttpStatus.FORBIDDEN, "권한이 없습니다"),
+    FORBIDDEN_RENT_ACCESS(HttpStatus.FORBIDDEN, "이 사용자는 해당 물품을 대여하지 않았습니다."),
+
 
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
     ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "물품을 찾을 수 없습니다"),
     REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "리뷰를 찾을 수 없습니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다"),
+    RENT_NOT_FOUND(HttpStatus.NOT_FOUND, "대여 정보를 찾을 수 없습니다"),
     NOT_FOUND(HttpStatus.NOT_FOUND, "파일이 존재하지 않습니다"),
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
