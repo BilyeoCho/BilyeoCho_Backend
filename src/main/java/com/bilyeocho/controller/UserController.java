@@ -7,10 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,11 +19,10 @@ public class UserController {
     @PutMapping("/update")
     public ResponseEntity<UserUpdateResponse> updateUser(
             @AuthenticationPrincipal UserDetails userDetails,
-            @RequestBody UserUpdateRequest requestDTO) {
+            @ModelAttribute UserUpdateRequest requestDTO) { // 변경
         String userId = userDetails.getUsername();
 
         UserUpdateResponse response = userService.updateUser(userId, requestDTO);
-
         return ResponseEntity.ok(response);
     }
 }
