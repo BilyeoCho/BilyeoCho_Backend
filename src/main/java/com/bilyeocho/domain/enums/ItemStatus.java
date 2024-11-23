@@ -1,4 +1,4 @@
-package com.bilyeocho.domain;
+package com.bilyeocho.domain.enums;
 
 public enum ItemStatus {
     AVAILABLE, // 아이템이 대여 가능 상태

@@ -1,5 +1,6 @@
 package com.bilyeocho.domain;
 
+import com.bilyeocho.domain.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -44,7 +45,7 @@ public class User implements UserDetails {
 
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
-    private Role role = Role.USER;
+    private UserRole role = UserRole.USER;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Item> registerItems;
@@ -67,7 +68,7 @@ public class User implements UserDetails {
             this.userPhoto = "none";
         }
         if (this.role == null) {
-            this.role = Role.USER;
+            this.role = UserRole.USER;
         }
     }
 

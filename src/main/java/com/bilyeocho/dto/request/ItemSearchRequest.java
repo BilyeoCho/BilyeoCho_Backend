@@ -1,6 +1,6 @@
 package com.bilyeocho.dto.request;
 
-import com.bilyeocho.domain.Category;
+import com.bilyeocho.domain.enums.ItemCategory;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,5 +9,5 @@ import lombok.Setter;
 public class ItemSearchRequest {
     private Long itemId;
     private String itemName;
-    private Category category;
+    private ItemCategory itemCategory;
 }

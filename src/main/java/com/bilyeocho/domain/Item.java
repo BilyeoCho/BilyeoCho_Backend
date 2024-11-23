@@ -1,10 +1,9 @@
 package com.bilyeocho.domain;
 
+import com.bilyeocho.domain.enums.ItemCategory;
+import com.bilyeocho.domain.enums.ItemStatus;
 import jakarta.persistence.*;
-import com.bilyeocho.domain.User;
 import lombok.*;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "items")
@@ -27,7 +26,7 @@ public class Item {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "category", nullable = false)
-    private Category category;
+    private ItemCategory itemCategory;
 
     @Column(name = "item_description", length = 1000, nullable = false) // 필요시 길이 조절
     private String itemDescription;

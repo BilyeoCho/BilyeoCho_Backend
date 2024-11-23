@@ -1,7 +1,7 @@
 package com.bilyeocho.service;
 
 import com.bilyeocho.domain.Item;
-import com.bilyeocho.domain.ItemStatus;
+import com.bilyeocho.domain.enums.ItemStatus;
 import com.bilyeocho.domain.Rent;
 import com.bilyeocho.domain.User;
 import com.bilyeocho.dto.request.RentRequest;
@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

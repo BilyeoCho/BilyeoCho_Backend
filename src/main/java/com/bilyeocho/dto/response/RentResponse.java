@@ -1,6 +1,6 @@
 package com.bilyeocho.dto.response;
 
-import com.bilyeocho.domain.ItemStatus;
+import com.bilyeocho.domain.enums.ItemStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

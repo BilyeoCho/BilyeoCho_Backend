@@ -1,8 +1,8 @@
 package com.bilyeocho.service;
 
 import com.bilyeocho.domain.Item;
-import com.bilyeocho.domain.ItemStatus;
-import com.bilyeocho.domain.Role;
+import com.bilyeocho.domain.enums.ItemStatus;
+import com.bilyeocho.domain.enums.UserRole;
 import com.bilyeocho.domain.User;
 import com.bilyeocho.dto.request.ItemRegistRequest;
 import com.bilyeocho.dto.request.ItemUpdateRequest;
@@ -43,7 +43,7 @@ public class ItemServiceImpl implements ItemService {
         Item newItem = Item.builder()
                 .itemName(requestDTO.getItemName())
                 .itemPhoto(itemPhotoUrl)
-                .category(requestDTO.getCategory())
+                .itemCategory(requestDTO.getItemCategory())
                 .itemDescription(requestDTO.getItemDescription())
                 .status(ItemStatus.AVAILABLE)
                 .price(requestDTO.getPrice())
@@ -90,8 +90,8 @@ public class ItemServiceImpl implements ItemService {
             String newPhotoUrl = s3Service.uploadFile(requestDTO.getItemPhoto());
             item.setItemPhoto(newPhotoUrl);
         }
-        if (requestDTO.getCategory() != null) {
-            item.setCategory(requestDTO.getCategory());
+        if (requestDTO.getItemCategory() != null) {
+            item.setItemCategory(requestDTO.getItemCategory());
         }
         if (requestDTO.getItemDescription() != null) {
             item.setItemDescription(requestDTO.getItemDescription());
@@ -118,7 +118,7 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다"));
 
         // 관리자 계정인지 확인
-        if (!user.getRole().equals(Role.ADMIN) && !item.getUser().getUserId().equals(userId)) {
+        if (!user.getRole().equals(UserRole.ADMIN) && !item.getUser().getUserId().equals(userId)) {
             throw new CustomException(ErrorCode.FORBIDDEN);
         }
 
