@@ -80,7 +80,7 @@ public class ReviewController {
             @ApiResponse(responseCode = "404", description = "리뷰 미발견"),
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
-    public ResponseEntity<String> updateReview(@PathVariable Long reviewId, @RequestBody ReviewRequest reviewRequest, @RequestParam(value = "reviewPhoto", required = false) MultipartFile reviewPhoto) {
+    public ResponseEntity<String> updateReview(@PathVariable Long reviewId, @ModelAttribute ReviewRequest reviewRequest, @RequestParam(value = "reviewPhoto", required = false) MultipartFile reviewPhoto) {
         reviewService.updateReview(reviewId, reviewRequest, reviewPhoto);
         return new ResponseEntity<>("리뷰 수정 성공", HttpStatus.OK);
     }
