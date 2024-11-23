@@ -1,6 +1,6 @@
-package com.bilyeocho.domain;
+package com.bilyeocho.domain.enums;
 
-public enum Category {
+public enum ItemCategory {
     SPORTS,
     FASHION,
     ELECTRONICS,

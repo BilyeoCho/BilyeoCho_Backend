@@ -1,6 +1,5 @@
 package com.bilyeocho.dto.request;
 
-import com.bilyeocho.domain.ItemStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

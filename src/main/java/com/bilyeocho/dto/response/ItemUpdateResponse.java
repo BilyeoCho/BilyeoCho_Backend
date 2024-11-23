@@ -1,8 +1,8 @@
 package com.bilyeocho.dto.response;
 
-import com.bilyeocho.domain.Category;
+import com.bilyeocho.domain.enums.ItemCategory;
 import com.bilyeocho.domain.Item;
-import com.bilyeocho.domain.ItemStatus;
+import com.bilyeocho.domain.enums.ItemStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +16,7 @@ public class ItemUpdateResponse {
     private Long itemId;
     private String itemName;
     private String itemDescription;
-    private Category category;
+    private ItemCategory itemCategory;
     private String itemPhoto;
     private Integer price;
     private ItemStatus status;
@@ -25,7 +25,7 @@ public class ItemUpdateResponse {
         this.itemId = item.getId();
         this.itemName = item.getItemName();
         this.itemDescription = item.getItemDescription();
-        this.category = item.getCategory();
+        this.itemCategory = item.getItemCategory();
         this.itemPhoto = item.getItemPhoto();
         this.price = item.getPrice();
         this.status = item.getStatus();
