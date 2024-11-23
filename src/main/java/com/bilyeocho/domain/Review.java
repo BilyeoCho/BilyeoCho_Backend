@@ -1,6 +1,7 @@
 package com.bilyeocho.domain;
 
 
+import com.bilyeocho.domain.enums.ReviewCategory;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,6 +27,9 @@ public class Review {
 
     @JoinColumn(name = "content")
     private String content;
+
+    @JoinColumn(name = "review_category")
+    private ReviewCategory reviewcategory;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
