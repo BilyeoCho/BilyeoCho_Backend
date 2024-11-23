@@ -27,6 +27,12 @@ public class AuthController {
 
     @PostMapping("/join")
     @Operation(summary = "회원가입", description = "유저 회원가입")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "회원가입 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청 (예: 누락된 필드, 잘못된 데이터 형식)"),
+            @ApiResponse(responseCode = "409", description = "이미 존재하는 사용자 ID"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
     public ResponseEntity join(@RequestBody AuthRequest joinRequest){
         authService.join(joinRequest);
         return new ResponseEntity<>(HttpStatus.OK);
