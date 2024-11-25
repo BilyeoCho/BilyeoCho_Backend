@@ -15,6 +15,11 @@ public enum ErrorCode {
     MISSING_USER_NAME(HttpStatus.BAD_REQUEST, "사용자 이름이 누락되었습니다"),
     MISMATCHED_PASSWORD(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다"),
     MISSING_REFRESH_TOKEN(HttpStatus.BAD_REQUEST, "리프레시 토큰이 누락되었습니다"),
+    MISSING_ITEM_NAME(HttpStatus.BAD_REQUEST, "아이템 이름은 공백일 수 없습니다."),
+    MISSING_ITEM_CATEGORY(HttpStatus.BAD_REQUEST, "아이템 카테고리는 공백일 수 없습니다."),
+    MISSING_ITEM_PHOTO(HttpStatus.BAD_REQUEST, "아이템 사진은 필수입니다."),
+    MISSING_ITEM_DESCRIPTION(HttpStatus.BAD_REQUEST, "아이템 설명은 공백일 수 없습니다."),
+    MISSING_ITEM_PRICE(HttpStatus.BAD_REQUEST, "아이템 가격은 공백일 수 없습니다."),
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "존재하지 않는 Id입니다"),

@@ -35,8 +35,29 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public ItemRegistResponse registerItem(ItemRegistRequest requestDTO, MultipartFile itemPhoto) {
+        // 입력값 검증
+        if (requestDTO.getItemName() == null || requestDTO.getItemName().isEmpty()) {
+            throw new CustomException(ErrorCode.MISSING_ITEM_NAME);
+        }
+
+        if (requestDTO.getItemCategory() == null) {
+            throw new CustomException(ErrorCode.MISSING_ITEM_CATEGORY);
+        }
+
+        if (itemPhoto == null || itemPhoto.isEmpty()) {
+            throw new CustomException(ErrorCode.MISSING_ITEM_PHOTO);
+        }
+
+        if (requestDTO.getItemDescription() == null || requestDTO.getItemDescription().isEmpty()) {
+            throw new CustomException(ErrorCode.MISSING_ITEM_DESCRIPTION);
+        }
+
+        if (requestDTO.getPrice() == null || requestDTO.getPrice() <= 0) {
+            throw new CustomException(ErrorCode.MISSING_ITEM_PRICE);
+        }
+
         User user = userRepository.findByUserId(requestDTO.getUserId())
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다"));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         String itemPhotoUrl = s3Service.uploadFile(itemPhoto);
 
@@ -54,11 +75,10 @@ public class ItemServiceImpl implements ItemService {
         return new ItemRegistResponse(savedItem.getId(), true);
     }
 
-
     @Override
     public ItemSearchResponse getItemById(Long id) {
         Item item = itemRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("해당 ID로 물품 조회가 불가능합니다"));
+                .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
         return new ItemSearchResponse(item);
     }
 
@@ -73,7 +93,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemUpdateResponse updateItem(Long id, ItemUpdateRequest requestDTO, String userId) {
         Item item = itemRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("해당 ID로 물품 조회가 불가능합니다"));
+                .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
 
         // 물품 등록자와 요청한 사용자의 ID가 일치하는지 확인
         if (!item.getUser().getUserId().equals(userId)) {
@@ -111,11 +131,11 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     public void deleteItem(Long itemId, String userId) {
         Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new RuntimeException("해당 ID로 물품 조회가 불가능합니다"));
+                .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
 
         // 요청을 보낸 사용자 조회
         User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다"));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         // 관리자 계정인지 확인
         if (!user.getRole().equals(UserRole.ADMIN) && !item.getUser().getUserId().equals(userId)) {

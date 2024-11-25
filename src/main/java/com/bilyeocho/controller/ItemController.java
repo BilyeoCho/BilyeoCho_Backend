@@ -7,6 +7,8 @@ import com.bilyeocho.dto.response.ItemSearchResponse;
 import com.bilyeocho.dto.response.ItemUpdateResponse;
 import com.bilyeocho.service.ItemService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +26,12 @@ public class ItemController {
 
     private final ItemService itemService;
 
-    // 물품 등록 API
     @Operation(summary = "물품 등록", description = "사용자가 물품을 등록합니다.", security = {@SecurityRequirement(name = "bearerAuth")})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "물품 등록 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청 (예: 누락된 필드)"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
     @PreAuthorize("isAuthenticated()")
     @PostMapping(value = "/regist", consumes = { "multipart/form-data" })
     public ResponseEntity<ItemRegistResponse> registerItem(@ModelAttribute ItemRegistRequest requestDTO) {
@@ -33,24 +39,36 @@ public class ItemController {
         return ResponseEntity.ok(responseDTO);
     }
 
-    // 물품 조회 API
-    @Operation(summary = "물품 조회", description = "물품 ID로 물품을 검색합니다")
+    @Operation(summary = "물품 조회", description = "물품 ID로 물품을 검색합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "물품 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "물품을 찾을 수 없습니다."),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
     @GetMapping(value = "/item/{id}")
     public ResponseEntity<ItemSearchResponse> getItemById(@PathVariable Long id) {
         ItemSearchResponse item = itemService.getItemById(id);
         return ResponseEntity.ok(item);
     }
 
-    // 모든 물품 조회 API
-    @Operation(summary = "모든 물품 조회", description = "전체 물품을 조회합니다")
+    @Operation(summary = "모든 물품 조회", description = "전체 물품을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "물품 조회 성공"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
     @GetMapping(value = "/items")
     public ResponseEntity<List<ItemSearchResponse>> getAllItems() {
         List<ItemSearchResponse> item = itemService.getAllItems();
         return ResponseEntity.ok(item);
     }
 
-    // 물품 업데이트 API
-    @Operation(summary = "물품 업데이트", description = "특정 ID의 물품 정보를 수정합니다")
+    @Operation(summary = "물품 업데이트", description = "특정 ID의 물품 정보를 수정합니다.", security = {@SecurityRequirement(name = "bearerAuth")})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "물품 업데이트 성공"),
+            @ApiResponse(responseCode = "403", description = "권한이 없습니다."),
+            @ApiResponse(responseCode = "404", description = "물품을 찾을 수 없습니다."),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
     @PreAuthorize("isAuthenticated()")
     @PutMapping(value = "/update/{id}", consumes = { "multipart/form-data" })
     public ResponseEntity<ItemUpdateResponse> updateItem(
@@ -63,23 +81,36 @@ public class ItemController {
         return ResponseEntity.ok(updatedItem);
     }
 
-    // 물품 삭제 API
-    @Operation(summary = "물품 삭제", description = "특정 ID의 물품을 삭제합니다.")
+    @Operation(summary = "물품 삭제", description = "특정 ID의 물품을 삭제합니다.", security = {@SecurityRequirement(name = "bearerAuth")})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "물품 삭제 성공"),
+            @ApiResponse(responseCode = "403", description = "권한이 없습니다."),
+            @ApiResponse(responseCode = "404", description = "물품을 찾을 수 없습니다."),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
     @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteItem(@PathVariable Long id, @AuthenticationPrincipal UserDetails currentUser) {
-        itemService.deleteItem(id, currentUser.getUsername()); // getUsername() 메서드로 userId 추출
-        return ResponseEntity.noContent().build(); // 상태 코드 204 반환
+        itemService.deleteItem(id, currentUser.getUsername());
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "최신 물품 불러오기", description = "최신 물품 4개를 불러옵니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "최신 물품 조회 성공"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
     @GetMapping("/latest")
     public ResponseEntity<List<ItemSearchResponse>> getLatestItems() {
         List<ItemSearchResponse> latestItems = itemService.getLatestItems();
         return ResponseEntity.ok(latestItems);
     }
 
-    @Operation(summary = "등록한 물품 조회", description = "사용자가 등록한 모든 물품을 조회합니다.")
+    @Operation(summary = "등록한 물품 조회", description = "사용자가 등록한 모든 물품을 조회합니다.", security = {@SecurityRequirement(name = "bearerAuth")})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "등록한 물품 조회 성공"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
     @GetMapping("/myitems")
     public ResponseEntity<List<ItemSearchResponse>> getMyItems(@AuthenticationPrincipal UserDetails userDetails) {
         String userId = userDetails.getUsername();
