@@ -13,6 +13,7 @@ import com.bilyeocho.repository.ItemRepository;
 import com.bilyeocho.repository.RentRepository;
 import com.bilyeocho.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
@@ -37,6 +39,7 @@ public class ItemServiceImpl implements ItemService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userId = authentication.getName(); // username 또는 userId로 설정됨
 
+        log.info("userId: " + userId);
         // 사용자 조회
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
