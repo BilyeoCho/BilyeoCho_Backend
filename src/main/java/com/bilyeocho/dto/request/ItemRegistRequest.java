@@ -1,12 +1,13 @@
 package com.bilyeocho.dto.request;
 
 import com.bilyeocho.domain.enums.ItemCategory;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
-@Getter
-@Setter
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ItemRegistRequest {
     private MultipartFile itemPhoto;
     private ItemCategory itemCategory;

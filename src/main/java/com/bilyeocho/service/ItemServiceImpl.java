@@ -35,25 +35,8 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public ItemRegistResponse registerItem(ItemRegistRequest requestDTO, MultipartFile itemPhoto) {
-        // 입력값 검증
-        if (requestDTO.getItemName() == null || requestDTO.getItemName().isEmpty()) {
-            throw new CustomException(ErrorCode.MISSING_ITEM_NAME);
-        }
-
-        if (requestDTO.getItemCategory() == null) {
-            throw new CustomException(ErrorCode.MISSING_ITEM_CATEGORY);
-        }
-
-        if (itemPhoto == null || itemPhoto.isEmpty()) {
-            throw new CustomException(ErrorCode.MISSING_ITEM_PHOTO);
-        }
-
-        if (requestDTO.getItemDescription() == null || requestDTO.getItemDescription().isEmpty()) {
-            throw new CustomException(ErrorCode.MISSING_ITEM_DESCRIPTION);
-        }
-
-        if (requestDTO.getPrice() == null || requestDTO.getPrice() <= 0) {
-            throw new CustomException(ErrorCode.MISSING_ITEM_PRICE);
+        if (requestDTO.getUserId() == null) {
+            throw new CustomException(ErrorCode.MISSING_USER_ID);
         }
 
         User user = userRepository.findByUserId(requestDTO.getUserId())
@@ -70,8 +53,8 @@ public class ItemServiceImpl implements ItemService {
                 .price(requestDTO.getPrice())
                 .user(user)
                 .build();
-        Item savedItem = itemRepository.save(newItem);
 
+        Item savedItem = itemRepository.save(newItem);
         return new ItemRegistResponse(savedItem.getId(), true);
     }
 
