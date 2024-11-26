@@ -99,6 +99,7 @@ public class JwtTokenProvider {
                 .setExpiration(accessTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
+
     }
 
     private String generateRefreshToken(Authentication authentication) {
