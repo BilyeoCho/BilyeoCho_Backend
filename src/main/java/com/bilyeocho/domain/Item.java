@@ -25,7 +25,7 @@ public class Item {
     private String itemPhoto;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "category", nullable = false)
+    @Column(name = "item_category", nullable = false)
     private ItemCategory itemCategory;
 
     @Column(name = "item_description", length = 1000, nullable = false) // 필요시 길이 조절
