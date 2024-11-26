@@ -36,22 +36,19 @@ public class ItemController {
     })
     @PreAuthorize("isAuthenticated()")
     @PostMapping(value = "/regist", consumes = { "multipart/form-data" })
-    public ResponseEntity<ItemRegistResponse> registerItem(
-            @ModelAttribute @Parameter(description = "물품 등록 요청 데이터", required = true) ItemRegistRequest requestDTO) {
+    public ResponseEntity<ItemRegistResponse> registerItem(@ModelAttribute ItemRegistRequest requestDTO) {
         ItemRegistResponse responseDTO = itemService.registerItem(requestDTO, requestDTO.getItemPhoto());
         return ResponseEntity.ok(responseDTO);
     }
 
-    @Operation(summary = "물품 조회",
-            description = "특정 ID를 사용해 물품 정보 조회")
+    @Operation(summary = "물품 조회", description = "물품 ID로 물품을 검색합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "물품 조회 성공"),
             @ApiResponse(responseCode = "404", description = "ID에 해당하는 물품을 찾을 수 없음"),
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @GetMapping(value = "/item/{id}")
-    public ResponseEntity<ItemSearchResponse> getItemById(
-            @Parameter(description = "물품 ID", example = "1", required = true) @PathVariable Long id) {
+    public ResponseEntity<ItemSearchResponse> getItemById(@PathVariable Long id) {
         ItemSearchResponse item = itemService.getItemById(id);
         return ResponseEntity.ok(item);
     }
@@ -78,9 +75,9 @@ public class ItemController {
     @PreAuthorize("isAuthenticated()")
     @PutMapping(value = "/update/{id}", consumes = { "multipart/form-data" })
     public ResponseEntity<ItemUpdateResponse> updateItem(
-            @Parameter(description = "업데이트할 물품 ID", example = "1", required = true) @PathVariable Long id,
-            @ModelAttribute @Parameter(description = "물품 업데이트 요청 데이터", required = true) ItemUpdateRequest requestDTO,
-            @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
+            @PathVariable Long id,
+            @ModelAttribute ItemUpdateRequest requestDTO,
+            @AuthenticationPrincipal UserDetails userDetails) {
 
         String userId = userDetails.getUsername();
         ItemUpdateResponse updatedItem = itemService.updateItem(id, requestDTO, userId);
@@ -98,15 +95,12 @@ public class ItemController {
     })
     @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteItem(
-            @Parameter(description = "삭제할 물품 ID", example = "1", required = true) @PathVariable Long id,
-            @Parameter(hidden = true) @AuthenticationPrincipal UserDetails currentUser) {
+    public ResponseEntity<Void> deleteItem(@PathVariable Long id, @AuthenticationPrincipal UserDetails currentUser) {
         itemService.deleteItem(id, currentUser.getUsername());
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "최신 물품 조회",
-            description = "최근 등록된 물품 4개를 조회")
+    @Operation(summary = "최신 물품 불러오기", description = "최신 물품 4개를 불러옵니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "최신 물품 조회 성공"),
             @ApiResponse(responseCode = "500", description = "서버 오류")
@@ -125,8 +119,7 @@ public class ItemController {
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     @GetMapping("/myitems")
-    public ResponseEntity<List<ItemSearchResponse>> getMyItems(
-            @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<List<ItemSearchResponse>> getMyItems(@AuthenticationPrincipal UserDetails userDetails) {
         String userId = userDetails.getUsername();
         List<ItemSearchResponse> items = itemService.getItemsByUserId(userId);
         return ResponseEntity.ok(items);
