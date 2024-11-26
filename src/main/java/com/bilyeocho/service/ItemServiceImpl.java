@@ -1,9 +1,9 @@
 package com.bilyeocho.service;
 
 import com.bilyeocho.domain.Item;
+import com.bilyeocho.domain.User;
 import com.bilyeocho.domain.enums.ItemStatus;
 import com.bilyeocho.domain.enums.UserRole;
-import com.bilyeocho.domain.User;
 import com.bilyeocho.dto.request.ItemRegistRequest;
 import com.bilyeocho.dto.request.ItemUpdateRequest;
 import com.bilyeocho.dto.response.ItemRegistResponse;
@@ -15,12 +15,9 @@ import com.bilyeocho.repository.ItemRepository;
 import com.bilyeocho.repository.RentRepository;
 import com.bilyeocho.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,13 +30,12 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final S3Service s3Service;
     private final RentRepository rentRepository;
+    private final UserAuthenticationService userAuthenticationService;
 
     @Override
     @Transactional
     public ItemRegistResponse registerItem(ItemRegistRequest requestDTO, MultipartFile itemPhoto) {
-        // 인증된 사용자 ID 가져오기
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userId = authentication.getName(); // username 또는 userId로 설정됨
+        String userId = userAuthenticationService.getAuthenticatedUserId();
 
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
@@ -64,20 +60,33 @@ public class ItemServiceImpl implements ItemService {
     public ItemSearchResponse getItemById(Long id) {
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
-
         if (item.getUser() == null) {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
-
         return new ItemSearchResponse(item);
     }
 
     @Override
+    public List<ItemSearchResponse> getAllItems() {
+        List<Item> items = itemRepository.findAll();
+        return items.stream()
+                .peek(item -> {
+                    if (item.getUser() == null) {
+                        throw new CustomException(ErrorCode.USER_NOT_FOUND);
+                    }
+                })
+                .map(ItemSearchResponse::new)
+                .toList();
+    }
+
+    @Override
     public ItemUpdateResponse updateItem(Long id, ItemUpdateRequest requestDTO, String userId) {
+        String authenticatedUserId = userAuthenticationService.getAuthenticatedUserId();
+
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
 
-        if (item.getUser() == null || !item.getUser().getUserId().equals(userId)) {
+        if (item.getUser() == null || !item.getUser().getUserId().equals(authenticatedUserId)) {
             throw new CustomException(ErrorCode.FORBIDDEN);
         }
 
@@ -111,6 +120,8 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public void deleteItem(Long itemId, String userId) {
+        String authenticatedUserId = userAuthenticationService.getAuthenticatedUserId();
+
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
 
@@ -118,8 +129,8 @@ public class ItemServiceImpl implements ItemService {
             throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
 
-        if (!item.getUser().getUserId().equals(userId)) {
-            User user = userRepository.findByUserId(userId)
+        if (!item.getUser().getUserId().equals(authenticatedUserId)) {
+            User user = userRepository.findByUserId(authenticatedUserId)
                     .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
             if (!user.getRole().equals(UserRole.ADMIN)) {
@@ -146,26 +157,12 @@ public class ItemServiceImpl implements ItemService {
                     }
                 })
                 .map(ItemSearchResponse::new)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<ItemSearchResponse> getAllItems() {
-        List<Item> items = itemRepository.findAll();
-        return items.stream()
-                .peek(item -> {
-                    if (item.getUser() == null) {
-                        throw new CustomException(ErrorCode.USER_NOT_FOUND);
-                    }
-                })
-                .map(ItemSearchResponse::new)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
     public List<ItemSearchResponse> getItemsByUserId(String userId) {
         List<Item> items = itemRepository.findByUserUserId(userId);
-
         return items.stream()
                 .peek(item -> {
                     if (item.getUser() == null) {
@@ -173,6 +170,6 @@ public class ItemServiceImpl implements ItemService {
                     }
                 })
                 .map(ItemSearchResponse::new)
-                .collect(Collectors.toList());
+                .toList();
     }
 }
