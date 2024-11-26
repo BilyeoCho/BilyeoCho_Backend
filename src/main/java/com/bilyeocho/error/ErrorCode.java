@@ -28,6 +28,7 @@ public enum ErrorCode {
     /* 403 FORBIDDEN : 권한이 없는 사용자 */
     FORBIDDEN(HttpStatus.FORBIDDEN, "권한이 없습니다"),
     FORBIDDEN_RENT_ACCESS(HttpStatus.FORBIDDEN, "이 사용자는 해당 물품을 대여하지 않았습니다."),
+    FORBIDDEN_ADMIN_ACCESS(HttpStatus.FORBIDDEN, "관리자 권한이 없습니다."),
 
 
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */

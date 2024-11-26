@@ -64,15 +64,12 @@ public class ItemServiceImpl implements ItemService {
     public ItemSearchResponse getItemById(Long id) {
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
-        return new ItemSearchResponse(item);
-    }
 
-    @Override
-    public List<ItemSearchResponse> getAllItems() {
-        List<Item> items = itemRepository.findAll();
-        return items.stream()
-                .map(ItemSearchResponse::new)
-                .toList();
+        if (item.getUser() == null) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
+
+        return new ItemSearchResponse(item);
     }
 
     @Override
@@ -80,8 +77,7 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
 
-        // 물품 등록자와 요청한 사용자의 ID가 일치하는지 확인
-        if (!item.getUser().getUserId().equals(userId)) {
+        if (item.getUser() == null || !item.getUser().getUserId().equals(userId)) {
             throw new CustomException(ErrorCode.FORBIDDEN);
         }
 
@@ -118,24 +114,25 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
 
-        // 요청을 보낸 사용자 조회
-        User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
-        // 관리자 계정인지 확인
-        if (!user.getRole().equals(UserRole.ADMIN) && !item.getUser().getUserId().equals(userId)) {
-            throw new CustomException(ErrorCode.FORBIDDEN);
+        if (item.getUser() == null) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
 
-        // rents 테이블의 관련 데이터 삭제
+        if (!item.getUser().getUserId().equals(userId)) {
+            User user = userRepository.findByUserId(userId)
+                    .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+            if (!user.getRole().equals(UserRole.ADMIN)) {
+                throw new CustomException(ErrorCode.FORBIDDEN_ADMIN_ACCESS);
+            }
+        }
+
         rentRepository.deleteByItem(item);
 
-        // S3의 이미지 삭제
         if (item.getItemPhoto() != null) {
             s3Service.deleteFile(item.getItemPhoto());
         }
 
-        // item 삭제
         itemRepository.delete(item);
     }
 
@@ -143,6 +140,24 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemSearchResponse> getLatestItems() {
         List<Item> latestItems = itemRepository.findTop4ByOrderByIdDesc();
         return latestItems.stream()
+                .peek(item -> {
+                    if (item.getUser() == null) {
+                        throw new CustomException(ErrorCode.USER_NOT_FOUND);
+                    }
+                })
+                .map(ItemSearchResponse::new)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ItemSearchResponse> getAllItems() {
+        List<Item> items = itemRepository.findAll();
+        return items.stream()
+                .peek(item -> {
+                    if (item.getUser() == null) {
+                        throw new CustomException(ErrorCode.USER_NOT_FOUND);
+                    }
+                })
                 .map(ItemSearchResponse::new)
                 .collect(Collectors.toList());
     }
@@ -150,8 +165,14 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemSearchResponse> getItemsByUserId(String userId) {
         List<Item> items = itemRepository.findByUserUserId(userId);
+
         return items.stream()
+                .peek(item -> {
+                    if (item.getUser() == null) {
+                        throw new CustomException(ErrorCode.USER_NOT_FOUND);
+                    }
+                })
                 .map(ItemSearchResponse::new)
-                .toList();
+                .collect(Collectors.toList());
     }
 }

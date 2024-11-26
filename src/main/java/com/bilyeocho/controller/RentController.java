@@ -52,7 +52,12 @@ public class RentController {
 
     // 내가 빌린 물품 조회
     @GetMapping("/borrowed")
-    @Operation(summary = "빌린 물품", description = "사용자가 빌린 물품들")
+    @Operation(summary = "빌린 물품", description = "사용자가 빌린 물품 목록을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "빌린 물품 조회 성공"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 요청입니다."),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
     public ResponseEntity<List<RentResponse>> getBorrowedItems(@AuthenticationPrincipal UserDetails userDetails) {
         String userId = userDetails.getUsername(); // 현재 로그인한 사용자의 ID
         List<RentResponse> borrowedItems = rentService.getBorrowedItems(userId);
@@ -61,7 +66,12 @@ public class RentController {
 
     // 내가 빌려준 물품 조회
     @GetMapping("/lent")
-    @Operation(summary = "빌려준 물품", description = "사용자가 빌려준 물품")
+    @Operation(summary = "빌려준 물품", description = "사용자가 빌려준 물품 목록을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "빌려준 물품 조회 성공"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 요청입니다."),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
     public ResponseEntity<List<RentResponse>> getLentItems(@AuthenticationPrincipal UserDetails userDetails) {
         String userId = userDetails.getUsername(); // 현재 로그인한 사용자의 ID
         List<RentResponse> lentItems = rentService.getLentItems(userId);
