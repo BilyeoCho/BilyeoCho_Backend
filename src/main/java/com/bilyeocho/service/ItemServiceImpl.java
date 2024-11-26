@@ -9,20 +9,22 @@ import com.bilyeocho.dto.request.ItemUpdateRequest;
 import com.bilyeocho.dto.response.ItemRegistResponse;
 import com.bilyeocho.dto.response.ItemSearchResponse;
 import com.bilyeocho.dto.response.ItemUpdateResponse;
+import com.bilyeocho.error.CustomException;
+import com.bilyeocho.error.ErrorCode;
 import com.bilyeocho.repository.ItemRepository;
 import com.bilyeocho.repository.RentRepository;
 import com.bilyeocho.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 
-@Slf4j
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
@@ -39,15 +41,11 @@ public class ItemServiceImpl implements ItemService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userId = authentication.getName(); // username 또는 userId로 설정됨
 
-        log.info("userId: " + userId);
-        // 사용자 조회
         User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        // 사진 업로드
         String itemPhotoUrl = s3Service.uploadFile(itemPhoto);
 
-        // 물품 등록
         Item newItem = Item.builder()
                 .itemName(requestDTO.getItemName())
                 .itemPhoto(itemPhotoUrl)
@@ -64,15 +62,13 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemSearchResponse getItemById(Long id) {
-        // 물품 조회
         Item item = itemRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Item not found"));
+                .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
         return new ItemSearchResponse(item);
     }
 
     @Override
     public List<ItemSearchResponse> getAllItems() {
-        // 전체 물품 조회
         List<Item> items = itemRepository.findAll();
         return items.stream()
                 .map(ItemSearchResponse::new)
@@ -81,16 +77,14 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemUpdateResponse updateItem(Long id, ItemUpdateRequest requestDTO, String userId) {
-        // 물품 조회
         Item item = itemRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Item not found"));
+                .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
 
-        // 물품 등록자 확인
+        // 물품 등록자와 요청한 사용자의 ID가 일치하는지 확인
         if (!item.getUser().getUserId().equals(userId)) {
-            throw new RuntimeException("Forbidden: Not allowed to update this item");
+            throw new CustomException(ErrorCode.FORBIDDEN);
         }
 
-        // 업데이트 로직
         if (requestDTO.getItemName() != null) {
             item.setItemName(requestDTO.getItemName());
         }
@@ -121,28 +115,27 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public void deleteItem(Long itemId, String userId) {
-        // 물품 조회
         Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new RuntimeException("Item not found"));
+                .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
 
-        // 사용자 확인
+        // 요청을 보낸 사용자 조회
         User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        // 관리자 또는 등록자인지 확인
+        // 관리자 계정인지 확인
         if (!user.getRole().equals(UserRole.ADMIN) && !item.getUser().getUserId().equals(userId)) {
-            throw new RuntimeException("Forbidden: Not allowed to delete this item");
+            throw new CustomException(ErrorCode.FORBIDDEN);
         }
 
-        // 관련 데이터 삭제
+        // rents 테이블의 관련 데이터 삭제
         rentRepository.deleteByItem(item);
 
-        // 사진 삭제
+        // S3의 이미지 삭제
         if (item.getItemPhoto() != null) {
             s3Service.deleteFile(item.getItemPhoto());
         }
 
-        // 물품 삭제
+        // item 삭제
         itemRepository.delete(item);
     }
 
@@ -151,7 +144,7 @@ public class ItemServiceImpl implements ItemService {
         List<Item> latestItems = itemRepository.findTop4ByOrderByIdDesc();
         return latestItems.stream()
                 .map(ItemSearchResponse::new)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Override
