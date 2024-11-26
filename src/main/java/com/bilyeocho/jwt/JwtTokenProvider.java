@@ -88,9 +88,14 @@ public class JwtTokenProvider {
 
         Date now = new Date();
         Date accessTokenExpiresIn = new Date(now.getTime() + accessExpirationTime);
+
+
+        String userId = authentication.getName();
+        String roles = authorities.isEmpty() ? "ROLE_USER" : authorities;
+
         return Jwts.builder()
-                .setSubject(authentication.getName())
-                .claim(AUTHORITIES_KEY, authorities)
+                .setSubject(userId)
+                .claim("auth", roles)
                 .setExpiration(accessTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
