@@ -15,6 +15,8 @@ import com.bilyeocho.repository.ItemRepository;
 import com.bilyeocho.repository.RentRepository;
 import com.bilyeocho.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,11 +37,11 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public ItemRegistResponse registerItem(ItemRegistRequest requestDTO, MultipartFile itemPhoto) {
-        if (requestDTO.getUserId() == null) {
-            throw new CustomException(ErrorCode.MISSING_USER_ID);
-        }
+        // 인증된 사용자 ID 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userId = authentication.getName(); // username 또는 userId로 설정됨
 
-        User user = userRepository.findByUserId(requestDTO.getUserId())
+        User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         String itemPhotoUrl = s3Service.uploadFile(itemPhoto);
