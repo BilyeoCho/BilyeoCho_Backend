@@ -13,6 +13,6 @@ public class ItemRegistRequest {
     private ItemCategory itemCategory;
     private String itemName;
     private String itemDescription;
-    //private String userId;
+    private String userId;
     private Integer price;
 }
