@@ -35,6 +35,9 @@ public class User implements UserDetails {
 //    @Column(name = "user_email")
 //    private String userEmail;
 
+    @Column(name = "open_kakao_link", nullable = false) // 오픈 카카오톡방 링크 필드 추가
+    private String openKakaoLink;
+
     @Column(name = "user_password",  nullable = false)
     private String userPassword;
 

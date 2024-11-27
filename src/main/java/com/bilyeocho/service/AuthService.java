@@ -48,8 +48,10 @@ public class AuthService  {
                 .userId(joinRequest.getUserId())
                 .userName(joinRequest.getUserName())
                 .userPassword(encoder.encode(joinRequest.getUserPwd()))
+                .openKakaoLink(joinRequest.getOpenKakaoLink()) // 추가된 부분
                 .build();
 
+        userRepository.save(joinUser);
         userRepository.save(joinUser);
     }
 
