@@ -26,4 +26,5 @@ public class UserController {
         UserUpdateResponse response = userService.updateUser(userId, requestDTO);
         return ResponseEntity.ok(response);
     }
+
 }

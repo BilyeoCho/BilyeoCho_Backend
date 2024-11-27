@@ -52,12 +52,17 @@ public class UserServiceImpl implements UserService {
             user.setUserPhoto(photoUrl);
         }
 
+        if (requestDTO.getOpenKakaoLink() != null) {
+            user.setOpenKakaoLink(requestDTO.getOpenKakaoLink());
+        }
+
         userRepository.save(user);
 
         return new UserUpdateResponse(
                 user.getUserId(),
                 user.getUserName(),
-                user.getUserPhoto()
+                user.getUserPhoto(),
+                user.getOpenKakaoLink()
         );
     }
 }

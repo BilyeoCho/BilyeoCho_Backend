@@ -114,6 +114,9 @@ public class ReviewService {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_NOT_FOUND));
 
+        String userId = userAuthenticationService.getAuthenticatedUserId();
+
+
         review.setRate(reviewRequest.getRate());
         review.setContent(reviewRequest.getContent());
 
