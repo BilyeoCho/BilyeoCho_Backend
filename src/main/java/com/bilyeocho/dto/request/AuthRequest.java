@@ -13,4 +13,5 @@ public class AuthRequest {
     private String userId;
     private String userName;
     private String userPwd;
+    private String openKakaoLink;
 }
