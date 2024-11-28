@@ -15,12 +15,14 @@ import com.bilyeocho.repository.ItemRepository;
 import com.bilyeocho.repository.RentRepository;
 import com.bilyeocho.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +33,7 @@ public class ItemServiceImpl implements ItemService {
     private final S3Service s3Service;
     private final RentRepository rentRepository;
     private final UserAuthenticationService userAuthenticationService;
+    private static final Logger logger = LoggerFactory.getLogger(ItemServiceImpl.class);
 
     @Override
     @Transactional
@@ -81,67 +84,73 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemUpdateResponse updateItem(Long id, ItemUpdateRequest requestDTO, String userId) {
-        // 인증된 사용자 ID 가져오기
+        logger.info("물품 업데이트 시작: Item ID = {}, User ID = {}", id, userId);
+
         String authenticatedUserId = userAuthenticationService.getAuthenticatedUserId();
+        logger.info("인증된 사용자 ID: {}", authenticatedUserId);
 
-        // 물품 조회
         Item item = itemRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
+                .orElseThrow(() -> {
+                    logger.error("물품 업데이트 실패: Item ID {}를 찾을 수 없습니다.", id);
+                    return new CustomException(ErrorCode.ITEM_NOT_FOUND);
+                });
 
-        // 권한 확인
         if (item.getUser() == null || !item.getUser().getUserId().equals(authenticatedUserId)) {
+            logger.error("물품 업데이트 실패: 사용자 권한 없음. 인증된 ID: {}, 아이템 등록자 ID: {}",
+                    authenticatedUserId, item.getUser() != null ? item.getUser().getUserId() : "null");
             throw new CustomException(ErrorCode.FORBIDDEN);
         }
 
-        // 물품 이름 업데이트
         if (requestDTO.getItemName() != null) {
+            logger.info("ItemName 업데이트: 기존 = {}, 새로운 = {}", item.getItemName(), requestDTO.getItemName());
             item.setItemName(requestDTO.getItemName());
         }
 
-        // 물품 사진 업데이트
         if (requestDTO.getItemPhoto() == null) {
-            System.out.println("itemPhoto is null.");
+            logger.info("ItemPhoto는 null입니다. 기존 사진 유지.");
         } else {
-            System.out.println("itemPhoto is received. Name: " + requestDTO.getItemPhoto().getOriginalFilename()
-                    + ", Size: " + requestDTO.getItemPhoto().getSize());
-
+            logger.info("ItemPhoto 업데이트 요청. Name = {}, Size = {}",
+                    requestDTO.getItemPhoto().getOriginalFilename(), requestDTO.getItemPhoto().getSize());
             if (!requestDTO.getItemPhoto().isEmpty()) {
-                // 기존 사진이 있으면 삭제
                 if (item.getItemPhoto() != null) {
+                    logger.info("기존 사진 삭제: {}", item.getItemPhoto());
                     s3Service.deleteFile(item.getItemPhoto());
                 }
-                // 새로운 사진 업로드
                 String newPhotoUrl = s3Service.uploadFile(requestDTO.getItemPhoto());
+                logger.info("새로운 사진 업로드 완료: {}", newPhotoUrl);
                 item.setItemPhoto(newPhotoUrl);
             } else {
-                System.out.println("itemPhoto is empty. Keeping the existing photo.");
+                logger.info("ItemPhoto는 비어 있습니다. 기존 사진 유지.");
             }
         }
 
-        // 카테고리 업데이트
         if (requestDTO.getItemCategory() != null) {
+            logger.info("ItemCategory 업데이트: 기존 = {}, 새로운 = {}",
+                    item.getItemCategory(), requestDTO.getItemCategory());
             item.setItemCategory(requestDTO.getItemCategory());
         }
 
-        // 상세 설명 업데이트
         if (requestDTO.getItemDescription() != null) {
+            logger.info("ItemDescription 업데이트: 기존 = {}, 새로운 = {}",
+                    item.getItemDescription(), requestDTO.getItemDescription());
             item.setItemDescription(requestDTO.getItemDescription());
         }
 
-        // 가격 업데이트
         if (requestDTO.getPrice() != null) {
+            logger.info("Price 업데이트: 기존 = {}, 새로운 = {}",
+                    item.getPrice(), requestDTO.getPrice());
             item.setPrice(requestDTO.getPrice());
         }
 
-        // 상태 업데이트
         if (requestDTO.getStatus() != null) {
+            logger.info("Status 업데이트: 기존 = {}, 새로운 = {}",
+                    item.getStatus(), requestDTO.getStatus());
             item.setStatus(requestDTO.getStatus());
         }
 
-        // 변경된 내용 저장
         itemRepository.save(item);
+        logger.info("물품 업데이트 성공: Item ID = {}", id);
 
-        // 업데이트된 내용으로 응답 반환
         return new ItemUpdateResponse(item);
     }
 
