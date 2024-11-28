@@ -81,39 +81,67 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemUpdateResponse updateItem(Long id, ItemUpdateRequest requestDTO, String userId) {
+        // 인증된 사용자 ID 가져오기
         String authenticatedUserId = userAuthenticationService.getAuthenticatedUserId();
 
+        // 물품 조회
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
 
+        // 권한 확인
         if (item.getUser() == null || !item.getUser().getUserId().equals(authenticatedUserId)) {
             throw new CustomException(ErrorCode.FORBIDDEN);
         }
 
+        // 물품 이름 업데이트
         if (requestDTO.getItemName() != null) {
             item.setItemName(requestDTO.getItemName());
         }
-        if (requestDTO.getItemPhoto() != null && !requestDTO.getItemPhoto().isEmpty()) {
-            if (item.getItemPhoto() != null) {
-                s3Service.deleteFile(item.getItemPhoto());
+
+        // 물품 사진 업데이트
+        if (requestDTO.getItemPhoto() == null) {
+            System.out.println("itemPhoto is null.");
+        } else {
+            System.out.println("itemPhoto is received. Name: " + requestDTO.getItemPhoto().getOriginalFilename()
+                    + ", Size: " + requestDTO.getItemPhoto().getSize());
+
+            if (!requestDTO.getItemPhoto().isEmpty()) {
+                // 기존 사진이 있으면 삭제
+                if (item.getItemPhoto() != null) {
+                    s3Service.deleteFile(item.getItemPhoto());
+                }
+                // 새로운 사진 업로드
+                String newPhotoUrl = s3Service.uploadFile(requestDTO.getItemPhoto());
+                item.setItemPhoto(newPhotoUrl);
+            } else {
+                System.out.println("itemPhoto is empty. Keeping the existing photo.");
             }
-            String newPhotoUrl = s3Service.uploadFile(requestDTO.getItemPhoto());
-            item.setItemPhoto(newPhotoUrl);
         }
+
+        // 카테고리 업데이트
         if (requestDTO.getItemCategory() != null) {
             item.setItemCategory(requestDTO.getItemCategory());
         }
+
+        // 상세 설명 업데이트
         if (requestDTO.getItemDescription() != null) {
             item.setItemDescription(requestDTO.getItemDescription());
         }
+
+        // 가격 업데이트
         if (requestDTO.getPrice() != null) {
             item.setPrice(requestDTO.getPrice());
         }
+
+        // 상태 업데이트
         if (requestDTO.getStatus() != null) {
             item.setStatus(requestDTO.getStatus());
         }
 
+        // 변경된 내용 저장
         itemRepository.save(item);
+
+        // 업데이트된 내용으로 응답 반환
         return new ItemUpdateResponse(item);
     }
 
