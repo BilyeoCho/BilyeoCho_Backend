@@ -84,73 +84,46 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemUpdateResponse updateItem(Long id, ItemUpdateRequest requestDTO, String userId) {
-        logger.info("물품 업데이트 시작: Item ID = {}, User ID = {}", id, userId);
-
         String authenticatedUserId = userAuthenticationService.getAuthenticatedUserId();
-        logger.info("인증된 사용자 ID: {}", authenticatedUserId);
 
         Item item = itemRepository.findById(id)
-                .orElseThrow(() -> {
-                    logger.error("물품 업데이트 실패: Item ID {}를 찾을 수 없습니다.", id);
-                    return new CustomException(ErrorCode.ITEM_NOT_FOUND);
-                });
+                .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
 
         if (item.getUser() == null || !item.getUser().getUserId().equals(authenticatedUserId)) {
-            logger.error("물품 업데이트 실패: 사용자 권한 없음. 인증된 ID: {}, 아이템 등록자 ID: {}",
-                    authenticatedUserId, item.getUser() != null ? item.getUser().getUserId() : "null");
             throw new CustomException(ErrorCode.FORBIDDEN);
         }
 
         if (requestDTO.getItemName() != null) {
-            logger.info("ItemName 업데이트: 기존 = {}, 새로운 = {}", item.getItemName(), requestDTO.getItemName());
             item.setItemName(requestDTO.getItemName());
         }
 
-        if (requestDTO.getItemPhoto() == null) {
-            logger.info("ItemPhoto는 null입니다. 기존 사진 유지.");
-        } else {
-            logger.info("ItemPhoto 업데이트 요청. Name = {}, Size = {}",
-                    requestDTO.getItemPhoto().getOriginalFilename(), requestDTO.getItemPhoto().getSize());
+        if (requestDTO.getItemPhoto() != null) {
             if (!requestDTO.getItemPhoto().isEmpty()) {
                 if (item.getItemPhoto() != null) {
-                    logger.info("기존 사진 삭제: {}", item.getItemPhoto());
                     s3Service.deleteFile(item.getItemPhoto());
                 }
                 String newPhotoUrl = s3Service.uploadFile(requestDTO.getItemPhoto());
-                logger.info("새로운 사진 업로드 완료: {}", newPhotoUrl);
                 item.setItemPhoto(newPhotoUrl);
-            } else {
-                logger.info("ItemPhoto는 비어 있습니다. 기존 사진 유지.");
             }
         }
 
         if (requestDTO.getItemCategory() != null) {
-            logger.info("ItemCategory 업데이트: 기존 = {}, 새로운 = {}",
-                    item.getItemCategory(), requestDTO.getItemCategory());
             item.setItemCategory(requestDTO.getItemCategory());
         }
 
         if (requestDTO.getItemDescription() != null) {
-            logger.info("ItemDescription 업데이트: 기존 = {}, 새로운 = {}",
-                    item.getItemDescription(), requestDTO.getItemDescription());
             item.setItemDescription(requestDTO.getItemDescription());
         }
 
         if (requestDTO.getPrice() != null) {
-            logger.info("Price 업데이트: 기존 = {}, 새로운 = {}",
-                    item.getPrice(), requestDTO.getPrice());
             item.setPrice(requestDTO.getPrice());
         }
 
         if (requestDTO.getStatus() != null) {
-            logger.info("Status 업데이트: 기존 = {}, 새로운 = {}",
-                    item.getStatus(), requestDTO.getStatus());
             item.setStatus(requestDTO.getStatus());
         }
 
         itemRepository.save(item);
-        logger.info("물품 업데이트 성공: Item ID = {}", id);
-
         return new ItemUpdateResponse(item);
     }
 
