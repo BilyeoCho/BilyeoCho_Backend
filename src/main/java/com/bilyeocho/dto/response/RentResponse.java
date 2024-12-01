@@ -20,4 +20,8 @@ public class RentResponse {
     private LocalDateTime endTime;
     private ItemStatus rentStatus;
 
+    public RentResponse(String itemId, String renterId) {
+        this.itemId = itemId;
+        this.renterId = renterId;
+    }
 }

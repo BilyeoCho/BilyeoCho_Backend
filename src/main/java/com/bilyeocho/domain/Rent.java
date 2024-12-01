@@ -2,6 +2,7 @@ package com.bilyeocho.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Cascade;
 
 import java.time.LocalDateTime;
 
@@ -26,10 +27,10 @@ public class Rent {
     @JoinColumn(name = "renter_id", nullable = false)
     private User user;
 
-    @Column(name = "start_time", nullable = false)
+    @Column(name = "start_time")
     private LocalDateTime startTime;
 
-    @Column(name = "end_time", nullable = false)
+    @Column(name = "end_time")
     private LocalDateTime endTime;
 
 }

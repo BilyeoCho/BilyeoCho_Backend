@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,8 +24,8 @@ public class RentController {
 
     private final RentService rentService;
 
-    @PostMapping("/request")
-    @Operation(summary = "대여 요청", description = "사용자가 물건 소유주에게 대여 요청")
+    @PostMapping("/rentstatus")
+    @Operation(summary = "물품 상태 변경", description = "렌트 요청을 받은 물건 소유주가 물품 상태 변경")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "대여 요청 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청 (예: 물품 상태가 대여 가능하지 않음)"),
@@ -50,7 +51,7 @@ public class RentController {
         return ResponseEntity.ok(rentResponse);
     }
 
-    // 내가 빌린 물품 조회
+
     @GetMapping("/borrowed")
     @Operation(summary = "빌린 물품", description = "사용자가 빌린 물품 목록을 조회합니다.")
     @ApiResponses(value = {
@@ -64,7 +65,7 @@ public class RentController {
         return ResponseEntity.ok(borrowedItems);
     }
 
-    // 내가 빌려준 물품 조회
+
     @GetMapping("/lent")
     @Operation(summary = "빌려준 물품", description = "사용자가 빌려준 물품 목록을 조회합니다.")
     @ApiResponses(value = {
@@ -76,5 +77,19 @@ public class RentController {
         String userId = userDetails.getUsername(); // 현재 로그인한 사용자의 ID
         List<RentResponse> lentItems = rentService.getLentItems(userId);
         return ResponseEntity.ok(lentItems);
+    }
+
+    @Operation(summary = "렌트 요청", description = "대여를 원하는 사용자가 소유주에게 렌트 요청.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "렌트 요청 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청 (예: 필드 누락, 잘못된 데이터 형식)"),
+            @ApiResponse(responseCode = "404", description = "아이템 또는 사용자 정보가 없음"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
+    @PostMapping("/request")
+    public ResponseEntity<RentResponse> makeRentRequest(@RequestBody RentRequest rentRequest) {
+
+        RentResponse rentResponse = rentService.makeRentRequest(rentRequest);
+        return new ResponseEntity<>(rentResponse, HttpStatus.OK);
     }
 }

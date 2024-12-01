@@ -14,4 +14,9 @@ public class RentRequest {
     private String renterId;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+
+    public RentRequest(String itemId, String renterId) {
+        this.itemId = itemId;
+        this.renterId = renterId;
+    }
 }

@@ -24,6 +24,7 @@ public class RentService {
     private final RentRepository rentRepository;
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+    private final UserAuthenticationService userAuthenticationService;
 
     @Transactional
     public RentResponse createRent(RentRequest rentRequest) {
@@ -133,4 +134,17 @@ public class RentService {
                 .toList();
     }
 
+    public RentResponse makeRentRequest(RentRequest rentRequest) {
+        Item item = itemRepository.findById(Long.parseLong(rentRequest.getItemId()))
+                .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
+
+        String userId = userAuthenticationService.getAuthenticatedUserId();
+
+        User renter = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        return RentResponse.builder()
+                .renterId(renter.getId().toString())
+                .build();
+    }
 }

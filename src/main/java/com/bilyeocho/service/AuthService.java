@@ -43,7 +43,7 @@ public class AuthService  {
             throw new CustomException(ErrorCode.MISSING_USER_ID);
         }
 
-        // 이름, 이메일 추가 필요
+
         User joinUser = User.builder()
                 .userId(joinRequest.getUserId())
                 .userName(joinRequest.getUserName())
@@ -74,5 +74,17 @@ public class AuthService  {
                 refreshToken = cookie.getValue();
         }
         return jwtTokenProvider.reissueToken(refreshToken, response);
+    }
+
+    public void deleteUser(String userId) {
+
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+//        reviewRepository.deleteByUser(user);
+//        rentRepository.deleteByUser(user);
+        userRepository.delete(user);
+
+        log.info("User with ID {} has been deleted", userId);
     }
 }
