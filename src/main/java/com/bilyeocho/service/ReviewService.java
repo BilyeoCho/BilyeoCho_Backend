@@ -43,7 +43,6 @@ public class ReviewService {
         Review review = Review.builder()
                 .rate(reviewRequest.getRate())
                 .reviewPhoto(reviewPhotoUrl)
-                .reviewcategory(reviewRequest.getReviewCategory())
                 .content(reviewRequest.getContent())
                 .user(user)
                 .item(item)
@@ -59,7 +58,6 @@ public class ReviewService {
         return new ReviewResponse(
                 review.getId(),
                 review.getRate(),
-                review.getReviewcategory(),
                 review.getReviewPhoto(),
                 review.getContent(),
                 review.getUser().getUsername(),
@@ -78,7 +76,6 @@ public class ReviewService {
                 .map(review -> new ReviewResponse(
                         review.getId(),
                         review.getRate(),
-                        review.getReviewcategory(),
                         review.getReviewPhoto(),
                         review.getContent(),
                         review.getUser().getUsername(),
@@ -99,7 +96,6 @@ public class ReviewService {
                 .map(review -> new ReviewResponse(
                         review.getId(),
                         review.getRate(),
-                        review.getReviewcategory(),
                         review.getReviewPhoto(),
                         review.getContent(),
                         review.getUser().getUsername(),

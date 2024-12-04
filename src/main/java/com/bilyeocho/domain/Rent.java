@@ -23,7 +23,7 @@ public class Rent {
     @JoinColumn(name = "item_id", nullable = false)
     private Item item;
 
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "renter_id", nullable = false)
     private User user;
 
@@ -32,5 +32,4 @@ public class Rent {
 
     @Column(name = "end_time")
     private LocalDateTime endTime;
-
 }

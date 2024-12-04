@@ -4,6 +4,9 @@ import com.bilyeocho.domain.Item;
 import com.bilyeocho.domain.Rent;
 import com.bilyeocho.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -20,5 +23,7 @@ public interface RentRepository extends JpaRepository<Rent, Long> {
 
     List<Rent> findByItemUserUserId(String userId);
 
-    void deleteByUser(User user);
+    @Modifying
+    @Query("DELETE FROM Rent r WHERE r.item.user = :user")
+    void deleteByItemUser(@Param("user") User user);
 }

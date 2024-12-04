@@ -28,7 +28,7 @@ public class Item {
     @Column(name = "item_category", nullable = false)
     private ItemCategory itemCategory;
 
-    @Column(name = "item_description", length = 1000, nullable = false) // 필요시 길이 조절
+    @Column(name = "item_description", length = 1000, nullable = false)
     private String itemDescription;
 
     @Column(name = "price", nullable = false)
@@ -38,11 +38,7 @@ public class Item {
     @Column(name = "item_status", nullable = false)
     private ItemStatus status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
-
-
-
 }

@@ -44,8 +44,6 @@ public class User implements UserDetails {
     @Column(name = "user_photo")
     private String userPhoto;
 
-
-
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private UserRole role = UserRole.USER;
@@ -56,24 +54,6 @@ public class User implements UserDetails {
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
     private List<String> roles = new ArrayList<>();
-
-    @PreRemove
-    public void preRemove() {
-        for (Item item : registerItems) {
-            item.setUser(null); // 관계 끊기
-        }
-    }
-
-
-    @PrePersist
-    public void prePersist() {
-        if (this.userPhoto == null || this.userPhoto.isEmpty()) {
-            this.userPhoto = "none";
-        }
-        if (this.role == null) {
-            this.role = UserRole.USER;
-        }
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

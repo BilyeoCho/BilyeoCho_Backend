@@ -90,14 +90,11 @@ public class AuthService  {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        rentRepository.deleteByUser(user);
+        rentRepository.deleteByItemUser(user);
+        reviewRepository.deleteByItemUser(user);
         itemRepository.deleteByUser(user);
-        reviewRepository.deleteByUser(user);
-
         userRepository.delete(user);
         jwtTokenProvider.invalidateToken(userId);
     }
-
-
 
 }
