@@ -20,6 +20,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -36,6 +37,7 @@ public class AuthService  {
     private final ItemRepository itemRepository;
     private final ReviewRepository reviewRepository;
 
+    @Transactional
     public void join(AuthRequest joinRequest){
         Optional<User> user = userRepository.findByUserId(joinRequest.getUserId());
         if(user.isPresent()){
@@ -54,13 +56,13 @@ public class AuthService  {
                 .userId(joinRequest.getUserId())
                 .userName(joinRequest.getUserName())
                 .userPassword(encoder.encode(joinRequest.getUserPwd()))
-                .openKakaoLink("추가 바람") // 추가된 부분
+                .openKakaoLink("추가 바람")
                 .build();
 
         userRepository.save(joinUser);
-        userRepository.save(joinUser);
     }
 
+    @Transactional
     public TokenInfo login(AuthRequest loginRequest, HttpServletResponse response){
         User user = userRepository.findByUserId(loginRequest.getUserId()).orElseThrow(() -> new CustomException(ErrorCode.UNAUTHORIZED));
         if(!encoder.matches(loginRequest.getUserPwd(), user.getUserPassword())){
@@ -82,6 +84,7 @@ public class AuthService  {
         return jwtTokenProvider.reissueToken(refreshToken, response);
     }
 
+    @Transactional
     public void deleteUser(String userId) {
 
         User user = userRepository.findByUserId(userId)
