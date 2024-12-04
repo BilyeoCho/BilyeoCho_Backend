@@ -6,8 +6,8 @@ import com.bilyeocho.dto.response.ItemRegistResponse;
 import com.bilyeocho.dto.response.ItemSearchResponse;
 import com.bilyeocho.dto.response.ItemUpdateResponse;
 import com.bilyeocho.service.ItemService;
+import com.bilyeocho.service.ViewTrackingService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -26,6 +26,7 @@ import java.util.List;
 public class ItemController {
 
     private final ItemService itemService;
+    private final ViewTrackingService viewTrackingService;
 
     @Operation(summary = "물품 등록", description = "사용자가 물품을 등록합니다.", security = {@SecurityRequirement(name = "bearerAuth")})
     @ApiResponses(value = {
@@ -49,7 +50,14 @@ public class ItemController {
     })
     @GetMapping(value = "/item/{id}")
     public ResponseEntity<ItemSearchResponse> getItemById(@PathVariable Long id) {
+
+        viewTrackingService.incrementViewCount(id);
+
         ItemSearchResponse item = itemService.getItemById(id);
+
+        Long viewCount = viewTrackingService.getViewCount(id);
+        item.setViewCount(viewCount);
+
         return ResponseEntity.ok(item);
     }
 
@@ -124,4 +132,18 @@ public class ItemController {
         List<ItemSearchResponse> items = itemService.getItemsByUserId(userId);
         return ResponseEntity.ok(items);
     }
+
+    @Operation(summary = "조회수 탑 3 아이템", description = "조회수 상위 3개 아이템을 반환합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회수 탑 3 조회 성공"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
+    @GetMapping("/item/top-3")
+    public ResponseEntity<List<ItemSearchResponse>> getTop3ItemsByViews() {
+        List<ItemSearchResponse> top3Items = viewTrackingService.getTop3ItemsByViews();
+        return ResponseEntity.ok(top3Items);
+    }
+
+
+
 }

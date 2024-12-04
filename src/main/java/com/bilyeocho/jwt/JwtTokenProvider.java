@@ -185,4 +185,9 @@ public class JwtTokenProvider {
             return e.getClaims();
         }
     }
+
+    public void invalidateToken(String token) {
+        redisTemplate.opsForValue().set("blacklist:" + token, "expired", 1, TimeUnit.DAYS); // 1일 동안 블랙리스트에 보관
+    }
+
 }

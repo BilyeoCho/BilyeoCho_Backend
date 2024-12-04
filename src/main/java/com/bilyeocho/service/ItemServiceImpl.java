@@ -17,6 +17,8 @@ import com.bilyeocho.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,6 +33,7 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
     private final S3Service s3Service;
+    private final RedisTemplate<String, String> redisTemplate;
     private final RentRepository rentRepository;
     private final UserAuthenticationService userAuthenticationService;
     private static final Logger logger = LoggerFactory.getLogger(ItemServiceImpl.class);

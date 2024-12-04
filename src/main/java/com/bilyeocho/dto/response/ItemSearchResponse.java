@@ -21,6 +21,7 @@ public class ItemSearchResponse {
     private Integer price;
     private ItemStatus status;
     private String userId;
+    private Long viewCount;
 
     public ItemSearchResponse(Item item) {
         this.itemId = item.getId();

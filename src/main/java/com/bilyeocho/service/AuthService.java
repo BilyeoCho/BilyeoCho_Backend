@@ -76,15 +76,5 @@ public class AuthService  {
         return jwtTokenProvider.reissueToken(refreshToken, response);
     }
 
-    public void deleteUser(String userId) {
-
-        User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
-//        reviewRepository.deleteByUser(user);
-//        rentRepository.deleteByUser(user);
-        userRepository.delete(user);
-
-        log.info("User with ID {} has been deleted", userId);
-    }
+    
 }
