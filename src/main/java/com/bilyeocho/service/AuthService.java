@@ -6,6 +6,9 @@ import com.bilyeocho.error.CustomException;
 import com.bilyeocho.error.ErrorCode;
 import com.bilyeocho.jwt.JwtTokenProvider;
 import com.bilyeocho.jwt.TokenInfo;
+import com.bilyeocho.repository.ItemRepository;
+import com.bilyeocho.repository.RentRepository;
+import com.bilyeocho.repository.ReviewRepository;
 import com.bilyeocho.repository.UserRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,6 +32,9 @@ public class AuthService  {
     private final BCryptPasswordEncoder encoder;
     private final AuthenticationManager authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final RentRepository rentRepository;
+    private final ItemRepository itemRepository;
+    private final ReviewRepository reviewRepository;
 
     public void join(AuthRequest joinRequest){
         Optional<User> user = userRepository.findByUserId(joinRequest.getUserId());
@@ -76,5 +82,19 @@ public class AuthService  {
         return jwtTokenProvider.reissueToken(refreshToken, response);
     }
 
-    
+    public void deleteUser(String userId) {
+
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        rentRepository.deleteByUser(user);
+        itemRepository.deleteByUser(user);
+        reviewRepository.deleteByUser(user);
+
+        userRepository.delete(user);
+        jwtTokenProvider.invalidateToken(userId);
+    }
+
+
+
 }

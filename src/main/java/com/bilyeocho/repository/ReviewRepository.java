@@ -13,4 +13,5 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     List<Review> findByUser(User user);
     List<Review> findByItem(Item item);
+    void deleteByUser(User user);
 }

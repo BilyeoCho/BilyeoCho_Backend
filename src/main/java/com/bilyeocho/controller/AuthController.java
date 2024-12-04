@@ -12,10 +12,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "인증", description = "유저 회원가입, 로그인, 토큰 재발급")
 @RestController
@@ -57,5 +57,18 @@ public class AuthController {
     public ResponseEntity<TokenInfo> reissueToken(HttpServletRequest request, HttpServletResponse response) {
         TokenInfo newTokenInfo = authService.reissueToken(request, response);
         return ResponseEntity.ok(newTokenInfo);
+    }
+
+    @Operation(summary = "회원 탈퇴", description = "회원 계정을 삭제합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "회원 탈퇴 성공"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
+    @PreAuthorize("isAuthenticated()")
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> deleteUser(@AuthenticationPrincipal UserDetails currentUser) {
+        authService.deleteUser(currentUser.getUsername());
+        return ResponseEntity.noContent().build();
     }
 }

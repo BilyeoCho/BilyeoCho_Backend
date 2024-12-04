@@ -20,4 +20,5 @@ public interface RentRepository extends JpaRepository<Rent, Long> {
 
     List<Rent> findByItemUserUserId(String userId);
 
+    void deleteByUser(User user);
 }
