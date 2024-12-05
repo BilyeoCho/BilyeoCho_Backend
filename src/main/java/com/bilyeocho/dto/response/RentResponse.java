@@ -15,13 +15,13 @@ import java.time.LocalDateTime;
 public class RentResponse {
     private Long rentId;
     private String itemId;
-    private String renterId;
+    private String renterUserId;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private ItemStatus rentStatus;
 
-    public RentResponse(String itemId, String renterId) {
+    public RentResponse(String itemId, String renterUserId) {
         this.itemId = itemId;
-        this.renterId = renterId;
+        this.renterUserId = renterUserId;
     }
 }

@@ -12,6 +12,7 @@ import com.bilyeocho.repository.ItemRepository;
 import com.bilyeocho.repository.RentRepository;
 import com.bilyeocho.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RentService {
 
     private final RentRepository rentRepository;
@@ -28,10 +30,14 @@ public class RentService {
 
     @Transactional
     public RentResponse createRent(RentRequest rentRequest) {
-        Item item = itemRepository.findById(Long.parseLong(rentRequest.getItemId()))
+
+
+        log.info(rentRequest.getRenterUserId());
+        Item item = itemRepository.findById(Long.valueOf(rentRequest.getItemId()))
                 .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
 
-        User renter = userRepository.findById(Long.parseLong(rentRequest.getRenterId()))
+
+        User renter = userRepository.findByUserId(rentRequest.getRenterUserId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         if (item.getStatus() != ItemStatus.AVAILABLE) {
@@ -52,13 +58,12 @@ public class RentService {
             return RentResponse.builder()
                     .rentId(existingRent.getId())
                     .itemId(item.getId().toString())
-                    .renterId(renter.getId().toString())
+                    .renterUserId(renter.getUserId())
                     .startTime(existingRent.getStartTime())
                     .endTime(existingRent.getEndTime())
                     .rentStatus(item.getStatus())
                     .build();
         }
-
 
         Rent rent = Rent.builder()
                 .item(item)
@@ -75,12 +80,14 @@ public class RentService {
         return RentResponse.builder()
                 .rentId(savedRent.getId())
                 .itemId(item.getId().toString())
-                .renterId(renter.getId().toString())
+                .renterUserId(renter.getUserId())
                 .startTime(savedRent.getStartTime())
                 .endTime(savedRent.getEndTime())
                 .rentStatus(item.getStatus())
                 .build();
     }
+
+
 
     @Transactional
     public RentResponse returnRent(Long rentId, Long renterId) {
@@ -99,7 +106,7 @@ public class RentService {
         return RentResponse.builder()
                 .rentId(rent.getId())
                 .itemId(rent.getItem().getId().toString())
-                .renterId(rent.getItem().getUser().getId().toString())
+                .renterUserId(rent.getItem().getUser().getId().toString())
                 .rentStatus(rent.getItem().getStatus())
                 .build();
     }
@@ -111,7 +118,7 @@ public class RentService {
                 .map(rent -> RentResponse.builder()
                         .rentId(rent.getId())
                         .itemId(rent.getItem().getId().toString())
-                        .renterId(rent.getUser().getUserId())
+                        .renterUserId(rent.getUser().getUserId())
                         .startTime(rent.getStartTime())
                         .endTime(rent.getEndTime())
                         .rentStatus(rent.getItem().getStatus())
@@ -126,7 +133,7 @@ public class RentService {
                 .map(rent -> RentResponse.builder()
                         .rentId(rent.getId())
                         .itemId(rent.getItem().getId().toString())
-                        .renterId(rent.getUser().getUserId())
+                        .renterUserId(rent.getUser().getUserId())
                         .startTime(rent.getStartTime())
                         .endTime(rent.getEndTime())
                         .rentStatus(rent.getItem().getStatus())
@@ -144,7 +151,7 @@ public class RentService {
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         return RentResponse.builder()
-                .renterId(renter.getId().toString())
+                .renterUserId(renter.getId().toString())
                 .build();
     }
 }

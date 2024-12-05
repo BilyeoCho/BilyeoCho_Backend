@@ -11,12 +11,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class RentRequest {
     private String itemId;
-    private String renterId;
+    private String renterUserId;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
 
     public RentRequest(String itemId, String renterId) {
         this.itemId = itemId;
-        this.renterId = renterId;
+        this.renterUserId = renterId;
     }
 }
