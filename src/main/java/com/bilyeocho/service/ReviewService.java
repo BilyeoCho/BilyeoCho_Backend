@@ -29,7 +29,7 @@ public class ReviewService {
     private final UserAuthenticationService userAuthenticationService;
 
     @Transactional
-    public void createReview(ReviewRequest reviewRequest, MultipartFile reviewPhoto) {
+    public ReviewResponse createReview(ReviewRequest reviewRequest, MultipartFile reviewPhoto) {
         String userId = userAuthenticationService.getAuthenticatedUserId();
 
         User user = userRepository.findByUserId(userId)
@@ -38,7 +38,7 @@ public class ReviewService {
         Item item = itemRepository.findById(reviewRequest.getItemId())
                 .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
 
-        String reviewPhotoUrl =  s3Service.uploadFile(reviewPhoto);
+        String reviewPhotoUrl = reviewPhoto != null ? s3Service.uploadFile(reviewPhoto) : null;
 
         Review review = Review.builder()
                 .rate(reviewRequest.getRate())
@@ -48,8 +48,19 @@ public class ReviewService {
                 .item(item)
                 .build();
 
-        reviewRepository.save(review);
+        Review savedReview = reviewRepository.save(review);
+
+        return new ReviewResponse(
+                savedReview.getId(),
+                savedReview.getRate(),
+                savedReview.getReviewPhoto(),
+                savedReview.getContent(),
+                user.getUserId(),
+                item.getItemName()
+        );
     }
+
+
     @Transactional
     public ReviewResponse getReview(Long reviewId) {
         Review review = reviewRepository.findById(reviewId)

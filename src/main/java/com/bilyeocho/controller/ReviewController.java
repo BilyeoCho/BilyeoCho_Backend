@@ -32,9 +32,9 @@ public class ReviewController {
             @ApiResponse(responseCode = "404", description = "물품 또는 사용자 미발견"),
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
-    public ResponseEntity<String> writeReview(@ModelAttribute ReviewRequest reviewRequest, @RequestParam(value = "reviewPhoto", required = false) MultipartFile reviewPhoto) {
-        reviewService.createReview(reviewRequest, reviewPhoto);
-        return new ResponseEntity<>("리뷰 작성 성공", HttpStatus.OK);
+    public ResponseEntity<ReviewResponse> writeReview(@ModelAttribute ReviewRequest reviewRequest, @RequestParam(value = "reviewPhoto", required = false) MultipartFile reviewPhoto) {
+        ReviewResponse response = reviewService.createReview(reviewRequest, reviewPhoto);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{reviewId}")
