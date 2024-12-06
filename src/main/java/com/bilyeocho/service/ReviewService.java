@@ -140,4 +140,19 @@ public class ReviewService {
 
         reviewRepository.delete(review);
     }
+
+    public List<ReviewResponse> getAllReviews(){
+        List<Review> reviews = reviewRepository.findAll();
+
+        return reviews.stream()
+                .map(review -> new ReviewResponse(
+                        review.getId(),
+                        review.getRate(),
+                        review.getReviewPhoto(),
+                        review.getContent(),
+                        review.getUser().getUsername(),
+                        review.getItem().getItemName()
+                ))
+                .collect(Collectors.toList());
+    }
 }

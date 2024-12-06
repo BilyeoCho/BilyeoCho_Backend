@@ -46,8 +46,8 @@ public class RentController {
             @ApiResponse(responseCode = "403", description = "해당 사용자는 대여하지 않은 물품을 반납하려고 함"),
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
-    public ResponseEntity<RentResponse> returnItem(@PathVariable Long rentId, @RequestParam Long renterId) {
-        RentResponse rentResponse = rentService.returnRent(rentId, renterId);
+    public ResponseEntity<RentResponse> returnItem(@PathVariable Long rentId, @RequestParam String renterUserId) {
+        RentResponse rentResponse = rentService.returnRent(rentId, renterUserId);
         return ResponseEntity.ok(rentResponse);
     }
 

@@ -90,11 +90,11 @@ public class RentService {
 
 
     @Transactional
-    public RentResponse returnRent(Long rentId, Long renterId) {
+    public RentResponse returnRent(Long rentId, String renterUserId) {
         Rent rent = rentRepository.findById(rentId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RENT_NOT_FOUND));
 
-        if (!rent.getUser().getId().equals(renterId)) {
+        if (!rent.getUser().getUserId().equals(renterUserId)) {
             throw new CustomException(ErrorCode.FORBIDDEN_RENT_ACCESS);
         }
 
@@ -111,7 +111,6 @@ public class RentService {
                 .build();
     }
 
-    // 내가 빌린 물품 조회
     public List<RentResponse> getBorrowedItems(String userId) {
         List<Rent> rents = rentRepository.findByUserUserId(userId);
         return rents.stream()
@@ -128,6 +127,7 @@ public class RentService {
 
     // 내가 빌려준 물품 조회
     public List<RentResponse> getLentItems(String userId) {
+
         List<Rent> rents = rentRepository.findByItemUserUserId(userId);
         return rents.stream()
                 .map(rent -> RentResponse.builder()

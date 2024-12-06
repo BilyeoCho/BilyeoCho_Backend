@@ -96,4 +96,12 @@ public class ReviewController {
         reviewService.deleteReview(reviewId);
         return new ResponseEntity<>("리뷰 삭제 성공", HttpStatus.OK);
     }
+
+    @GetMapping("/all")
+    @Operation(summary = "전체 리뷰 조회", description = "전체 리뷰를 조회합니다.")
+    public ResponseEntity<List<ReviewResponse>> getAllReviews() {
+        List<ReviewResponse> reviews = reviewService.getAllReviews();
+        return ResponseEntity.ok(reviews);
+    }
+
 }
