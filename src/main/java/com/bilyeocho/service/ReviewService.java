@@ -77,8 +77,8 @@ public class ReviewService {
     }
 
     @Transactional
-    public List<ReviewResponse> getAllReviewsByUser(Long userId) {
-        User user = userRepository.findById(userId)
+    public List<ReviewResponse> getAllReviewsByUser(String userId) {
+        User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         List<Review> reviews = reviewRepository.findByUser(user);
@@ -89,11 +89,12 @@ public class ReviewService {
                         review.getRate(),
                         review.getReviewPhoto(),
                         review.getContent(),
-                        review.getUser().getUsername(),
+                        review.getUser().getUserId(),
                         review.getItem().getItemName()
                 ))
                 .collect(Collectors.toList());
     }
+
 
 
     @Transactional

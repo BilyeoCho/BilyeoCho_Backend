@@ -56,7 +56,7 @@ public class ReviewController {
             @ApiResponse(responseCode = "404", description = "사용자 미발견"),
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
-    public ResponseEntity<List<ReviewResponse>> getAllReviewsByUser(@PathVariable Long userId) {
+    public ResponseEntity<List<ReviewResponse>> getAllReviewsByUser(@PathVariable String userId) {
         List<ReviewResponse> reviews = reviewService.getAllReviewsByUser(userId);
         return new ResponseEntity<>(reviews, HttpStatus.OK);
     }
